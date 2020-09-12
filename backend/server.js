@@ -1,42 +1,9 @@
 const app = require("express")();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
-//const firebase = require("firebase");
-//const { option } = require("yargs");
-//require("firebase/firestore");
-//firebase.initializeApp(firebaseConfig);
-
-//var db = firebase.firestore();
 
 const port = process.env.PORT || 4000;
 //const max_teacherid = 1000; //if user id is below 1000, user is a teacher
-
-/*
-user
-{
-userid:equal to socket id,
-name:x,
-sessionid:string,
-isteacher:bool,
-group:x
-}
-
-*/
-
-//change this if there's a better way to do it
-function isTeacher(userid) {
-  return db
-    .collection("users")
-    .where("userid", "==", userid)
-    .where("isteacher", "==", true)
-    .get()
-    .then(() => {
-      return true;
-    })
-    .catch(() => {
-      return false;
-    });
-}
 
 //does nothing really
 io.on("connection", (socket) => {
@@ -50,33 +17,15 @@ io.on("connection", (socket) => {
   });
 });
 
-//add new user to database
-function saveUser(data) {
-  let newuser = {
-    userid: data.userid,
-    name: data.name,
-    sessionid: data.sessionid,
-    isteacher: data.isteacher,
-  };
-  db.collection("users")
-    .doc(data.userid)
-    .set(newuser)
-    .then(function () {
-      console.log("Document successfully written!");
-    })
-    .catch(function (error) {
-      console.error("Error writing document: ", error);
-    });
-}
-
 /*new users submit a join request with session id. Join a room for that session id, distinguished
 by teacher or student*/
-//data format {userid:x name:x sessionid:string isteacher:x}
+//data format {sessionid:string isteacher:x}
 io.on("connection", (socket) => {
   socket.on("join request", (data) => {
     saveUser(data);
 
-    if (isTeacher(data.userid)) {
+    let room = data.sessionid;
+    if (data.isteacher) {
       socket.join(room + "-teacher");
     } else {
       socket.join(room);
@@ -89,7 +38,7 @@ io.on("connection", (socket) => {
 
 /*Send teacher draw data to students and student data to teachers. Draw data includes
 sessionid and userid in addition to draw information*/
-
+//{sessionid isteacher x0 y0 x1 y1}
 //database call here seems bad
 io.on("connection", (socket) => {
   socket.on("draw data", (data) => {
@@ -98,9 +47,9 @@ io.on("connection", (socket) => {
     console.log(room);
 
     if (data.isteacher) {
-      io.to(sessionid).emit("draw data", data); //if user is teacher, send data to session
+      io.to(data.sessionid).emit("draw data", data); //if user is teacher, send data to session
     } else {
-      io.to(sessionid + "-teacher").emit("draw data", data); //if user is student, send data to teacher of session
+      io.to(data.sessionid + "-teacher").emit("draw data", data); //if user is student, send data to teacher of session
       if (room != data.sessionid) {
         io.to(room).emit("draw data", data); //if student is in a group, send data to group
       }
@@ -111,41 +60,48 @@ io.on("connection", (socket) => {
 // data format {userid:x sessionid:string groupsize:x}
 io.on("connection", (socket) => {
   socket.on("enable groups", (data) => {
-    if (!isTeacher(data.userid)) return;
+    if (!data.isteacher) return;
 
-    let students = io.sockets.clients(data.sessionid);
+    let students = Object.keys(
+      io.sockets.adapter.rooms[data.sessionid].sockets
+    );
     let groupnum;
     //if groupsize=3, and sessionid=55, put students 0, 1 and 2 into group 55-0, 3,4,5 into group 55-1, etc
-    if (data.groupsize > 1 && groupsize <= students.length) {
-      students.forEach((student, index) => {
-        groupnum = Math.floor(index / groupsize);
-        student.join(data.sessionid + "-" + groupnum);
-        db.collection("users")
+    if (data.groupsize > 1 && data.groupsize <= students.length) {
+      students.forEach((studentid, index) => {
+        groupnum = Math.floor(index / data.groupsize);
+        let room = data.sessionid + "-" + groupnum;
+        io.sockets.connected[studentid].join(room);
+        console.log(studentid, " joined ", room);
+
+        /*db.collection("users")
           .doc("" + student.id)
-          .update({ group: groupnum });
+          .update({ group: groupnum });*/
       });
     }
   });
 });
 
-//data format {userid, sessionid studentid groupnum}
+//data format {sessionid studentid groupnum}
 //change a student's group
 io.on("connection", (socket) => {
   socket.on("move student", (data) => {
-    if (!isTeacher(data.userid)) return;
-    let student = io.sockets.clients(data.sessionid).find((student) => {
-      return student.id == data.studentid;
-    });
-    student.leave(findGroupRoom(student));
-    student.join(data.sessionid + "-" + data.groupnum);
+    if (!data.isteacher) return;
+    let student = io.sockets.connected[data.studentid];
 
-    db.collection("users").doc(data.studentid).update({ group: groupnum });
+    student.leave(findGroupRoom(data.studentid));
+    let room = data.sessionid + "-" + data.groupnum;
+    student.join(room);
+    console.log(data.studentid, " joined ", room);
+    //db.collection("users").doc(data.studentid).update({ group: groupnum });
   });
 });
 
-function findGroupRoom(socket) {
-  socket.room.find((room) => {
-    return /.+-.+/.test(room);
+function findGroupRoom(studentid) {
+  let rooms = Object.keys(io.sockets.manager.roomClients[studentid]);
+  console.log(rooms);
+  return rooms.find((room) => {
+    return /\d-\d/.test(room);
   });
 }
 
