@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import { useAuth0 } from "@auth0/auth0-react";
 import { db } from "../firebase";
@@ -53,6 +54,7 @@ const Home = () => {
               Student
             </Button>
           </div>
+          <Link to="/class/109074203591919453634">Class</Link>
           <Button
             variant="contained"
             color="secondary"
