@@ -16,20 +16,8 @@ const Board = () => {
     // --------------- getContext() method returns a drawing context on the canvas-----
 
     const canvas = canvasRef.current;
-    const test = colorsRef.current;
     const context = canvas.getContext("2d");
-
-    // ------------------------------- clear canvas -----------------------------------
-
-    const clearbtn = document.getElementsByClassName("clear");
     let drawing = false;
-
-    const clearCanvas = (e) => {
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      console.log("clicked");
-    };
-
-    clearbtn[0].addEventListener("click", clearCanvas, false);
 
     // ------------------------------- create the drawline ----------------------------
 
@@ -125,11 +113,6 @@ const Board = () => {
 
     // -------------- make the canvas fill its parent component -----------------
 
-    const onResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-
     window.addEventListener("resize", onResize, false);
     onResize();
 
@@ -143,6 +126,12 @@ const Board = () => {
     socketRef.current = io.connect("/");
     socketRef.current.on("drawing", onDrawingEvent);
   }, []);
+
+  const onResize = () => {
+    const canvas = canvasRef.current;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
 
   // ------------- The Canvas and color elements --------------------------
 
@@ -198,7 +187,7 @@ const Board = () => {
             Yellow
           </Button>
         </ButtonGroup>
-        <button className="clear">Clear Canvas</button>
+        <Button onClick={() => onResize()}>Clear Canvas</Button>
       </div>
     </div>
   );
