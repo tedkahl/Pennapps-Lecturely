@@ -9,8 +9,22 @@ import "../styles/home.css";
 const Home = () => {
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
 
-  const saveToDatabase = (type) => {
-    console.log(db);
+  const saveToDatabase = (isTeacher) => {
+    db.collection("user")
+      .doc(user.sub)
+      .set({
+        id: user.sub,
+        name: user.nickname,
+        isteacher: isTeacher,
+        sessionid: "",
+        group: "",
+      })
+      .then(function () {
+        console.log("Document successfully written!");
+      })
+      .catch(function (error) {
+        console.error("Error writing document: ", error);
+      });
   };
 
   const logoutWithRedirect = () =>
@@ -40,7 +54,7 @@ const Home = () => {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => saveToDatabase("teacher")}
+              onClick={() => saveToDatabase(true)}
               style={{ margin: 10 }}
             >
               Teacher
@@ -48,7 +62,7 @@ const Home = () => {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => saveToDatabase("student")}
+              onClick={() => saveToDatabase(false)}
               style={{ margin: 10 }}
             >
               Student
