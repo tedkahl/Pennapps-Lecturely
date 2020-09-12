@@ -51,7 +51,10 @@ const Home = () => {
               Student
             </Button>
           </div>
-          <Link to="/class/109074203591919453634">Class</Link>
+          <Link to={`/class/${user.sub.split("|")[1]}`}>
+            Your Personal Class
+          </Link>
+          <Link to={`/class/109074203591919453634`}>Test Class</Link>
           <Button
             variant="contained"
             color="secondary"
