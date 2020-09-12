@@ -10,21 +10,21 @@ firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 
 const port = process.env.PORT || 4000;
-const max_teacherid = 1000; //if user id is below 1000, user is a teacher
+//const max_teacherid = 1000; //if user id is below 1000, user is a teacher
 
 /*
 user
 {
-userid:x,
+userid:equal to socket id,
 name:x,
 sessionid:string,
-socketid:x,   -combine with userid? Can just remember
+isteacher:bool,
 group:x
 }
 
 */
 
-//change this if using database
+//change this if there's a better way to do it
 function isTeacher(userid) {
   return db
     .collection("users")
@@ -47,6 +47,7 @@ io.on("connection", (socket) => {
     console.log("a user disconnected");
   });
 });
+
 //add new user to database
 function saveUser(data) {
   let newuser = {
@@ -105,7 +106,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// data format "enable groups", {userid:x sessionid:string groupsize:x}
+// data format {userid:x sessionid:string groupsize:x}
 io.on("connection", (socket) => {
   socket.on("enable groups", (data) => {
     if (!isTeacher(data.userid)) return;
@@ -125,7 +126,7 @@ io.on("connection", (socket) => {
   });
 });
 
-//{userid, sessionid studentid groupnum}
+//data format {userid, sessionid studentid groupnum}
 //change a student's group
 io.on("connection", (socket) => {
   socket.on("move student", (data) => {
