@@ -18,11 +18,13 @@ const Board = (props) => {
     const colors = colorsRef.current;
 
     const onColorUpdate = (e) => {
+      console.log("Called");
       current.color = e.target.className.split(" ")[1];
       console.log(current.color);
     };
 
     for (let i = 0; i < colors.length; i++) {
+      // change these to a button idk not working
       colors[i].addEventListener("click", onColorUpdate, false);
     }
 
@@ -42,10 +44,6 @@ const Board = (props) => {
 
     socketRef.current = socketIOClient(ENDPOINT);
     socketRef.current.on("drawing", onDrawingEvent);
-
-    const context = canvasRef.current.getContext("2d");
-    context.fillRect(0, 0, 100, 100);
-    drawLine(20, 20, 20, 100, "black", true);
   }, []);
 
   const onDrawingEvent = (data) => {
@@ -61,7 +59,6 @@ const Board = (props) => {
 
   const drawLine = (x0, y0, x1, y1, color, emit) => {
     const context = canvasRef.current.getContext("2d");
-    console.log("called" + context);
     context.beginPath();
     context.moveTo(x0, y0);
     context.lineTo(x1, y1);
@@ -137,7 +134,6 @@ const Board = (props) => {
   console.log(props.match.params.id);
   return (
     <div className="main">
-      <canvas ref={canvasRef} className="whiteboard" />
       <div ref={colorsRef} className="colors">
         <div className="color black" />
         <div className="color red" />
@@ -145,6 +141,7 @@ const Board = (props) => {
         <div className="color blue" />
         <div className="color yellow" />
       </div>
+      <canvas ref={canvasRef} className="whiteboard" />
     </div>
   );
 };

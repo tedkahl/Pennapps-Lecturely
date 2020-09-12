@@ -9,8 +9,6 @@
 .whiteboard {
   position: relative;
   background-color: #e6e6e6;
-  width: 70%;
-  height: 0;
   padding-bottom: 40%;
   margin: 2rem;
 }
