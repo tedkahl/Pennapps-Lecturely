@@ -1,6 +1,8 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
 import { useAuth0 } from "@auth0/auth0-react";
+import logo from "../assets/logo.png";
+import "../styles/home.css"
 
 const Home = () => {
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
@@ -15,7 +17,9 @@ const Home = () => {
     });
 
   return (
-    <div>
+    <div className="home">
+      <img src={logo} className="logo"/>
+      <h3>To create a session:</h3>
       {!isAuthenticated && (
         <Button
           variant="contained"
