@@ -2,8 +2,6 @@ const app = require("express")();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 
-const router = express.Router();
-
 const port = process.env.PORT || 4000;
 
 const max_teacherid = 1000;
@@ -42,10 +40,10 @@ io.on("connection", (socket) => {
   });
 });
 
-router.get("/", (req, res) => {
+app.get("/", (req, res) => {
   res.send("server running");
 });
 
 http.listen(port, () => {
-  console.log(`listening on ${process.env.PORT}`);
+  console.log(`listening on ${port}`);
 });
