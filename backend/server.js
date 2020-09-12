@@ -42,11 +42,11 @@ function isTeacher(userid) {
 //does nothing really
 io.on("connection", (socket) => {
   console.log("a user connected");
+
   socket.on("disconnect", () => {
     console.log("a user disconnected");
   });
 });
-
 //add new user to database
 function saveUser(data) {
   let newuser = {
@@ -86,13 +86,10 @@ io.on("connection", (socket) => {
 
 /*Send teacher draw data to students and student data to teachers. Draw data includes
 sessionid and userid in addition to draw information*/
-//data format {userid:x, sessionid:string, ...(drawing information)}
 
-//backend call here seems bad, not real time
+//database call here seems bad
 io.on("connection", (socket) => {
   socket.on("draw data", (data) => {
-    if (!isTeacher(data.userid));
-
     room = findGroupRoom(socket) || data.sessionid;
 
     console.log(room);
