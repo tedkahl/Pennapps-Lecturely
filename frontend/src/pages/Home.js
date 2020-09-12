@@ -115,14 +115,44 @@ const Home = () => {
               </div>
             </>
           )}
+          <Button
+            variant="contained"
+            color="secondary"
+            style={{ marginBottom: "1rem" }}
+          >
+            <Link
+              to={`/class/${user.sub.split("|")[1]}`}
+              style={{ textDecoration: "none", color: "white" }}
+            >
+              Your Personal Class
+            </Link>
+          </Button>
 
-          <Link to={`/class/${user.sub.split("|")[1]}`}>
-            Your Personal Class
-          </Link>
-          <Link to={`/board/${user.sub.split("|")[1]}`}>
-            Your Personal Board
-          </Link>
-          <Link to={`/class/109074203591919453634`}>Test Class</Link>
+          <Button
+            variant="contained"
+            color="secondary"
+            style={{ marginBottom: "1rem" }}
+          >
+            <Link
+              to={`/board/${user.sub.split("|")[1]}`}
+              style={{ textDecoration: "none", color: "white" }}
+            >
+              Your Personal Board
+            </Link>
+          </Button>
+
+          <Button
+            variant="contained"
+            color="secondary"
+            style={{ marginBottom: "1rem" }}
+          >
+            <Link
+              to={`/class/109074203591919453634`}
+              style={{ textDecoration: "none", color: "white" }}
+            >
+              Test Class
+            </Link>
+          </Button>
           <Button
             variant="contained"
             color="secondary"
