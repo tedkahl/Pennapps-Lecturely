@@ -1,13 +1,12 @@
 const app = require("express")();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
-const router = express.Router();
-const firebase = require("firebase");
-const { option } = require("yargs");
-require("firebase/firestore");
-firebase.initializeApp(firebaseConfig);
+//const firebase = require("firebase");
+//const { option } = require("yargs");
+//require("firebase/firestore");
+//firebase.initializeApp(firebaseConfig);
 
-var db = firebase.firestore();
+//var db = firebase.firestore();
 
 const port = process.env.PORT || 4000;
 //const max_teacherid = 1000; //if user id is below 1000, user is a teacher
@@ -42,6 +41,7 @@ function isTeacher(userid) {
 //does nothing really
 io.on("connection", (socket) => {
   console.log("a user connected");
+  socket.on("drawing", (data) => socket.broadcast.emit("drawing", data));
 
   socket.on("disconnect", () => {
     console.log("a user disconnected");
@@ -147,7 +147,7 @@ function findGroupRoom(socket) {
   });
 }
 
-router.get("/", (req, res) => {
+app.get("/", (req, res) => {
   res.send("server running");
 });
 
