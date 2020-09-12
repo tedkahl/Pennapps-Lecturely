@@ -2,13 +2,33 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import { useAuth0 } from "@auth0/auth0-react";
+import { db } from "../firebase";
 import logo from "../assets/logo.png";
 import "../styles/home.css";
 
 const Home = () => {
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
 
-  const saveToDatabase = (type) => {};
+  const saveToDatabase = (isTeacher) => {
+    db.collection("user")
+      .doc(user.sub)
+      .set({
+        id: user.sub,
+        nickname: user.nickname,
+        name: user.name,
+        email: user.email,
+        profile: user.picture,
+        isteacher: isTeacher,
+        sessionid: "",
+        group: "",
+      })
+      .then(function () {
+        console.log("Document successfully written!");
+      })
+      .catch(function (error) {
+        console.error("Error writing document: ", error);
+      });
+  };
 
   const logoutWithRedirect = () =>
     logout({
@@ -37,7 +57,7 @@ const Home = () => {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => saveToDatabase("teacher")}
+              onClick={() => saveToDatabase(true)}
               style={{ margin: 10 }}
             >
               Teacher
@@ -45,7 +65,7 @@ const Home = () => {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => saveToDatabase("student")}
+              onClick={() => saveToDatabase(false)}
               style={{ margin: 10 }}
             >
               Student
