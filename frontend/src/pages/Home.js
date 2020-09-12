@@ -30,6 +30,22 @@ const Home = () => {
       });
   };
 
+  const getUser = async (id) => {
+    const doc = await db.doc(`user/${id}`).get();
+    const user = doc.data();
+    return user;
+  };
+
+  const connectToDatabase = async (isTeacher) => {
+    const response = await getUser(user.sub);
+    if (!response) {
+      await saveToDatabase(isTeacher);
+      console.log("added to database with id", user.sub);
+    } else {
+      console.log("user already exists");
+    }
+  };
+
   const logoutWithRedirect = () =>
     logout({
       returnTo: window.location.origin,
@@ -57,7 +73,7 @@ const Home = () => {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => saveToDatabase(true)}
+              onClick={() => connectToDatabase(true)}
               style={{ margin: 10 }}
             >
               Teacher
@@ -65,7 +81,7 @@ const Home = () => {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => saveToDatabase(false)}
+              onClick={() => connectToDatabase(false)}
               style={{ margin: 10 }}
             >
               Student
