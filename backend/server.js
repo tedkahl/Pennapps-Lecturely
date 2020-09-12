@@ -9,14 +9,13 @@ const max_teacherid = 1000;
 //does nothing really
 io.on("connection", (socket) => {
   console.log("a user connected");
+
   socket.on("disconnect", () => {
     console.log("a user disconnected");
   });
-});
 
-/*new users submit a join request with session id. Join a room for that session id, distinguished
+  /*new users submit a join request with session id. Join a room for that session id, distinguished
 by teacher or student*/
-io.on("connection", (socket) => {
   socket.on("join request", (data) => {
     let room = "" + data.sessionid;
 
@@ -26,11 +25,9 @@ io.on("connection", (socket) => {
 
     console.log(socket.id, " joined ", sessionid);
   });
-});
 
-/*Send teacher draw data to students and student data to teachers. Draw data includes
+  /*Send teacher draw data to students and student data to teachers. Draw data includes
 sessionid and userid in addition to draw information*/
-io.on("connection", (socket) => {
   socket.on("draw data", (data) => {
     let room = "" + data.sessionid;
 
