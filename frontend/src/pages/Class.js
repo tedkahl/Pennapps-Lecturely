@@ -17,7 +17,13 @@ const Class = (props) => {
     socket = io.connect(ENDPOINT + "/admin");
   else socket = io.connect(ENDPOINT + "/student", { query: `id=${userID}` });
 
-  const boards = activeUsers.map((id) => <Board id={id} socket={socket} />);
+  const boards = activeUsers.map((id) => (
+    <Board
+      id={id}
+      styling={props.match.params.id === id ? "main" : "side"}
+      socket={socket}
+    />
+  ));
 
   return <ul>{boards}</ul>;
 };
