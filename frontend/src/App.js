@@ -18,7 +18,6 @@ function App() {
               <Home />
             </Route>
             <Route path="/board/:id" exact component={Board} />
-
             <Redirect to="/" />
           </Switch>
         </main>
