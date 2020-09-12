@@ -8,9 +8,6 @@ const port = process.env.PORT || 4000;
 //does nothing really
 io.on("connection", (socket) => {
   console.log("a user connected");
-  socket.on("drawing", (data) => {
-    socket.broadcast.emit("drawing", data);
-  });
 
   socket.on("disconnect", () => {
     console.log("a user disconnected");
@@ -22,36 +19,35 @@ by teacher or student*/
 //data format {sessionid:string isteacher:x}
 io.on("connection", (socket) => {
   socket.on("join request", (data) => {
-    saveUser(data);
+    let room = data.isteacher ? data.sessionid + "-teacher" : data.sessionid;
 
-    let room = data.sessionid;
-    if (data.isteacher) {
-      socket.join(room + "-teacher");
-    } else {
-      socket.join(room);
+    socket.join(room);
+    if (!data.isteacher)
       socket.to(data.sessionid + "-teacher").emit("join request", data); //tells the teacher who the student is
-    }
 
-    console.log(socket.id, " joined ", data.sessionid);
+    console.log(socket.id, " joined ", room);
   });
 });
 
-/*Send teacher draw data to students and student data to teachers. Draw data includes
+/*Send teacher drawing to students and student data to teachers. drawing includes
 sessionid and userid in addition to draw information*/
 //{sessionid isteacher x0 y0 x1 y1}
 //database call here seems bad
 io.on("connection", (socket) => {
-  socket.on("draw data", (data) => {
-    room = findGroupRoom(socket) || data.sessionid;
+  socket.on("drawing", (data) => {
+    room = findGroupRoom(socket.id) || data.sessionid;
 
     console.log(room);
 
     if (data.isteacher) {
-      io.to(data.sessionid).emit("draw data", data); //if user is teacher, send data to session
+      console.log("emitting to session");
+      io.to(data.sessionid).emit("drawing", data); //if user is teacher, send data to session
     } else {
-      io.to(data.sessionid + "-teacher").emit("draw data", data); //if user is student, send data to teacher of session
+      console.log("emitting to teacher");
+      io.to(data.sessionid + "-teacher").emit("drawing", data); //if user is student, send data to teacher of session
       if (room != data.sessionid) {
-        io.to(room).emit("draw data", data); //if student is in a group, send data to group
+        console.log("emitting to group");
+        io.to(room).emit("drawing", data); //if student is in a group, send data to group
       }
     }
   });
@@ -65,18 +61,18 @@ io.on("connection", (socket) => {
     let students = Object.keys(
       io.sockets.adapter.rooms[data.sessionid].sockets
     );
+
     let groupnum;
+    let room;
     //if groupsize=3, and sessionid=55, put students 0, 1 and 2 into group 55-0, 3,4,5 into group 55-1, etc
     if (data.groupsize > 1 && data.groupsize <= students.length) {
       students.forEach((studentid, index) => {
         groupnum = Math.floor(index / data.groupsize);
-        let room = data.sessionid + "-" + groupnum;
-        io.sockets.connected[studentid].join(room);
-        console.log(studentid, " joined ", room);
+        room = data.sessionid + "-" + groupnum;
 
-        /*db.collection("users")
-          .doc("" + student.id)
-          .update({ group: groupnum });*/
+        io.sockets.connected[studentid].join(room);
+
+        console.log(studentid, " joined ", room);
       });
     }
   });
@@ -98,7 +94,7 @@ io.on("connection", (socket) => {
 });
 
 function findGroupRoom(studentid) {
-  let rooms = Object.keys(io.sockets.manager.roomClients[studentid]);
+  let rooms = Object.keys(io.sockets.connected[studentid].rooms);
   console.log(rooms);
   return rooms.find((room) => {
     return /\d-\d/.test(room);
