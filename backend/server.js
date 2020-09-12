@@ -4,16 +4,11 @@ const io = require("socket.io")(http);
 
 const router = express.Router();
 
-/*
-require("firebase/firestore");
-firebase.initializeApp(firebaseConfig);
-var db = firebase.firestore();
-*/
-
 const port = process.env.PORT || 4000;
 
 const max_teacherid = 1000;
 
+//does nothing really
 io.on("connection", (socket) => {
   console.log("a user connected");
   socket.on("disconnect", () => {
@@ -35,7 +30,8 @@ io.on("connection", (socket) => {
   });
 });
 
-/*Send teacher draw data to students and student data to teachers*/
+/*Send teacher draw data to students and student data to teachers. Draw data includes
+sessionid and userid in addition to draw information*/
 io.on("connection", (socket) => {
   socket.on("draw data", (data) => {
     let room = "" + data.sessionid;
