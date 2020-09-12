@@ -8,9 +8,7 @@ import "../styles/home.css";
 const Home = () => {
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
 
-  if (isAuthenticated) {
-    //save use to firebase
-  }
+  const saveToDatabase = (type) => {};
 
   const logoutWithRedirect = () =>
     logout({
@@ -20,18 +18,39 @@ const Home = () => {
   return (
     <div className="home">
       <img src={logo} className="logo" />
-      <h3>To create a session:</h3>
       {!isAuthenticated && (
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => loginWithRedirect()}
-        >
-          Sign in with account
-        </Button>
+        <>
+          <h3>To create a session:</h3>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => loginWithRedirect()}
+          >
+            Sign in with account
+          </Button>
+        </>
       )}
       {isAuthenticated && (
         <>
+          <h3>Select your status:</h3>
+          <div style={{ padding: 10 }}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => saveToDatabase("teacher")}
+              style={{ margin: 10 }}
+            >
+              Teacher
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => saveToDatabase("student")}
+              style={{ margin: 10 }}
+            >
+              Student
+            </Button>
+          </div>
           <Link to="/class/109074203591919453634">Class</Link>
           <Button
             variant="contained"
