@@ -6,6 +6,8 @@ import Board from "./Board";
 
 const ENDPOINT = "http://localhost:4000";
 
+const activeUsers = ["109074203591919453634", "104609449234380862807"];
+
 const Class = (props) => {
   const { user } = useAuth0();
   let socket;
@@ -15,16 +17,9 @@ const Class = (props) => {
     socket = io.connect(ENDPOINT + "/admin");
   else socket = io.connect(ENDPOINT + "/student", { query: `id=${userID}` });
 
-  return (
-    <Grid container spacing={3}>
-      <Grid item xs={12} sm={9}>
-        <Board id="1" socket={socket}></Board>
-      </Grid>
-      <Grid item xs={12} sm={9}>
-        <Board id="2" socket={socket}></Board>
-      </Grid>
-    </Grid>
-  );
+  const boards = activeUsers.map((id) => <Board id={id} socket={socket} />);
+
+  return <ul>{boards}</ul>;
 };
 
 export default Class;
