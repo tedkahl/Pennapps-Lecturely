@@ -1,8 +1,9 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import { useAuth0 } from "@auth0/auth0-react";
 import logo from "../assets/logo.png";
-import "../styles/home.css"
+import "../styles/home.css";
 
 const Home = () => {
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
@@ -18,7 +19,7 @@ const Home = () => {
 
   return (
     <div className="home">
-      <img src={logo} className="logo"/>
+      <img src={logo} className="logo" />
       <h3>To create a session:</h3>
       {!isAuthenticated && (
         <Button
@@ -31,6 +32,7 @@ const Home = () => {
       )}
       {isAuthenticated && (
         <>
+          <Link to="/class/109074203591919453634">Class</Link>
           <Button
             variant="contained"
             color="secondary"

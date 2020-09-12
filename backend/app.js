@@ -8,11 +8,16 @@ const port = process.env.PORT || 4000;
 var teachers = io.of("/admin");
 var students = io.of("/student");
 
-const students = [];
+const studentsList = [];
 
 students.on("connection", (socket) => {
+  console.log("student connection");
+
   // when student joins inform teacher
-  students.push({ socketID: socket.id, userID: socket.handshake.query["id"] });
+  studentsList.push({
+    socketID: socket.id,
+    userID: socket.handshake.query["id"],
+  });
   teachers.emit("update_students");
 
   socket.on("drawing", (data) => {
@@ -20,8 +25,8 @@ students.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    students.splice(
-      students.findIndex((item) => item.socketID === socket.id),
+    studentsList.splice(
+      studentsList.findIndex((item) => item.socketID === socket.id),
       1
     );
     teachers.emit("update_students");
