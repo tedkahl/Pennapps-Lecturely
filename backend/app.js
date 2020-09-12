@@ -9,12 +9,14 @@ var teachers = io.of("/admin");
 var students = io.of("/student");
 
 students.on("connection", (socket) => {
+  console.log("student connection");
   socket.on("drawing", (data) => {
     teachers.emit("drawing", data);
   });
 });
 
 teachers.on("connection", (socket) => {
+  console.log("teacher connection");
   socket.on("drawing", (data) => {
     students.emit("drawing", data);
   });

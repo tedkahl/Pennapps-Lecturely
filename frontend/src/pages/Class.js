@@ -5,7 +5,7 @@ import Board from "./Board";
 const ENDPOINT = "http://localhost:4000/";
 
 const Class = (props) => {
-  console.log(props.match.params.id);
+  console.log(props.match.params.id); // compare this ID to local token to see if teacher
   const socket = socketIOClient(ENDPOINT);
 
   return (

@@ -1,8 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import socketIOClient from "socket.io-client";
 import "../styles/board.css";
-
-const ENDPOINT = "http://localhost:4000/";
 
 const Board = (props) => {
   const canvasRef = useRef(null);
