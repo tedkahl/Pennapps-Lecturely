@@ -4,7 +4,7 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 import io from "socket.io-client";
 import "../styles/board.css";
 
-const Board = () => {
+const Board = (props) => {
   const canvasRef = useRef(null);
   const colorsRef = useRef(null);
   const socketRef = useRef();
@@ -123,7 +123,9 @@ const Board = () => {
       drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
     };
 
-    socketRef.current = io.connect("/");
+    socketRef.current = io.connect(
+      props.socketConnection || "http://localhost:4000"
+    );
     socketRef.current.on("drawing", onDrawingEvent);
   }, []);
 

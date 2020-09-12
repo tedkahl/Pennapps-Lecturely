@@ -119,6 +119,9 @@ const Home = () => {
           <Link to={`/class/${user.sub.split("|")[1]}`}>
             Your Personal Class
           </Link>
+          <Link to={`/board/${user.sub.split("|")[1]}`}>
+            Your Personal Board
+          </Link>
           <Link to={`/class/109074203591919453634`}>Test Class</Link>
           <Button
             variant="contained"
