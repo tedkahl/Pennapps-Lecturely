@@ -41,7 +41,9 @@ function isTeacher(userid) {
 //does nothing really
 io.on("connection", (socket) => {
   console.log("a user connected");
-  socket.on("drawing", (data) => socket.broadcast.emit("drawing", data));
+  socket.on("drawing", (data) => {
+    socket.broadcast.emit("drawing", data);
+  });
 
   socket.on("disconnect", () => {
     console.log("a user disconnected");

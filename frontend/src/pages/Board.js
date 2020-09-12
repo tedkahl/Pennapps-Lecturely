@@ -47,6 +47,7 @@ const Board = (props) => {
   }, []);
 
   const onDrawingEvent = (data) => {
+    if (data.boardID != props.id) return;
     const w = canvasRef.current.width;
     const h = canvasRef.current.height;
     drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
@@ -79,6 +80,7 @@ const Board = (props) => {
       x1: x1 / w,
       y1: y1 / h,
       color,
+      boardID: props.id,
     });
   };
 
@@ -131,7 +133,6 @@ const Board = (props) => {
     };
   };
 
-  console.log(props.match.params.id);
   return (
     <div className="main">
       <div ref={colorsRef} className="colors">

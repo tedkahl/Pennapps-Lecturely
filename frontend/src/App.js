@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import Home from "./pages/Home";
 import Board from "./pages/Board";
+import Class from "./pages/Class";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
               <Home />
             </Route>
             <Route path="/board/:id" exact component={Board} />
+            <Route path="/class/:id" exact component={Class} />
             <Redirect to="/" />
           </Switch>
         </main>
