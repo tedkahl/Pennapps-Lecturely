@@ -7,7 +7,7 @@ const ENDPOINT = "http://localhost:4000/";
 const Board = (props) => {
   const canvasRef = useRef(null);
   const colorsRef = useRef(null);
-  const socketRef = useRef();
+  const socketRef = useRef(null);
   let drawing = false;
   const current = {
     color: "black",
@@ -42,6 +42,10 @@ const Board = (props) => {
 
     socketRef.current = socketIOClient(ENDPOINT);
     socketRef.current.on("drawing", onDrawingEvent);
+
+    const context = canvasRef.current.getContext("2d");
+    context.fillRect(0, 0, 100, 100);
+    drawLine(20, 20, 20, 100, "black", true);
   }, []);
 
   const onDrawingEvent = (data) => {
@@ -56,8 +60,8 @@ const Board = (props) => {
   };
 
   const drawLine = (x0, y0, x1, y1, color, emit) => {
-    console.log("called");
     const context = canvasRef.current.getContext("2d");
+    console.log("called" + context);
     context.beginPath();
     context.moveTo(x0, y0);
     context.lineTo(x1, y1);
