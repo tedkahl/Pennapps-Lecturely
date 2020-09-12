@@ -14,7 +14,10 @@ const Home = () => {
       .doc(user.sub)
       .set({
         id: user.sub,
-        name: user.nickname,
+        nickname: user.nickname,
+        name: user.name,
+        email: user.email,
+        profile: user.picture,
         isteacher: isTeacher,
         sessionid: "",
         group: "",
