@@ -7,7 +7,6 @@ const ENDPOINT = "http://localhost:4000/";
 const Board = (props) => {
   const canvasRef = useRef(null);
   const colorsRef = useRef(null);
-  const socketRef = useRef(null);
   let drawing = false;
   const current = {
     color: "black",
@@ -42,8 +41,7 @@ const Board = (props) => {
     canvas.addEventListener("touchcancel", onMouseUp, false);
     canvas.addEventListener("touchmove", throttle(onMouseMove, 10), false);
 
-    socketRef.current = socketIOClient(ENDPOINT);
-    socketRef.current.on("drawing", onDrawingEvent);
+    props.socket.on("drawing", onDrawingEvent);
   }, []);
 
   const onDrawingEvent = (data) => {
@@ -74,7 +72,7 @@ const Board = (props) => {
     const w = canvasRef.current.width;
     const h = canvasRef.current.height;
 
-    socketRef.current.emit("drawing", {
+    props.socket.emit("drawing", {
       x0: x0 / w,
       y0: y0 / h,
       x1: x1 / w,
