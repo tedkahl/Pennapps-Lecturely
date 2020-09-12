@@ -1,13 +1,16 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
 import { useAuth0 } from "@auth0/auth0-react";
+import { db } from "../firebase";
 import logo from "../assets/logo.png";
 import "../styles/home.css";
 
 const Home = () => {
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
 
-  const saveToDatabase = (type) => {};
+  const saveToDatabase = (type) => {
+    console.log(db);
+  };
 
   const logoutWithRedirect = () =>
     logout({
