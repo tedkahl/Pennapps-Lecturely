@@ -84,10 +84,10 @@ const Home = () => {
           <h3>To create a session:</h3>
           <Button
             variant="contained"
-            color="secondary"
+            style={{ backgroundColor: "rgb(127,238,230)", color: "white" }}
             onClick={() => loginWithRedirect()}
           >
-            Sign in with account
+            Sign In
           </Button>
         </>
       )}
@@ -99,17 +99,23 @@ const Home = () => {
               <div style={{ padding: 10 }}>
                 <Button
                   variant="contained"
-                  color="secondary"
                   onClick={() => connectToDatabase(true)}
-                  style={{ margin: 10 }}
+                  style={{
+                    margin: 10,
+                    backgroundColor: "rgb(127,238,230)",
+                    color: "white",
+                  }}
                 >
                   Teacher
                 </Button>
                 <Button
                   variant="contained"
-                  color="secondary"
                   onClick={() => connectToDatabase(false)}
-                  style={{ margin: 10 }}
+                  style={{
+                    margin: 10,
+                    backgroundColor: "rgb(127,238,230)",
+                    color: "white",
+                  }}
                 >
                   Student
                 </Button>
