@@ -54,8 +54,6 @@ const Home = () => {
 
   const checkForOldUser = async () => {
     const response = await getUser(user.sub);
-    console.log(response);
-    console.log(saved);
     if (response && !saved) {
       setSaved(true);
       setIsTeacher(response.isteacher);
@@ -84,7 +82,11 @@ const Home = () => {
           <h3>To create a session:</h3>
           <Button
             variant="contained"
-            style={{ backgroundColor: "rgb(127,238,230)", color: "white", textShadow:'1px 1px 1px rgba(0,0,0,0.14)' }}
+            style={{
+              backgroundColor: "rgb(127,238,230)",
+              color: "white",
+              textShadow: "1px 1px 1px rgba(0,0,0,0.14)",
+            }}
             onClick={() => loginWithRedirect()}
           >
             Sign In
@@ -103,7 +105,8 @@ const Home = () => {
                   style={{
                     margin: 10,
                     backgroundColor: "rgb(127,238,230)",
-                    color: "white", textShadow:'1px 1px 1px rgba(0,0,0,0.14)'
+                    color: "white",
+                    textShadow: "1px 1px 1px rgba(0,0,0,0.14)",
                   }}
                 >
                   Teacher
@@ -114,7 +117,8 @@ const Home = () => {
                   style={{
                     margin: 10,
                     backgroundColor: "rgb(127,238,230)",
-                    color: "white", textShadow:'1px 1px 1px rgba(0,0,0,0.14)'
+                    color: "white",
+                    textShadow: "1px 1px 1px rgba(0,0,0,0.14)",
                   }}
                 >
                   Student
@@ -123,17 +127,27 @@ const Home = () => {
             </>
           )}
           {isTeacher && (
-            <Button
-              variant="contained"
-              style={{ marginBottom: "1rem", backgroundColor: "rgb(127,238,230)" }}
-            >
-              <Link
-                to={`/class/${user.sub.split("|")[1]}`}
-                style={{ textDecoration: "none", color: "white", textShadow:'1px 1px 1px rgba(0,0,0,0.14)' }}
+            <>
+              <h3> Your class code: {user.sub.split("|")[1]}</h3>
+              <Button
+                variant="contained"
+                style={{
+                  marginBottom: "1rem",
+                  backgroundColor: "rgb(127,238,230)",
+                }}
               >
-                Your Personal Class
-              </Link>
-            </Button>
+                <Link
+                  to={`/class/${user.sub.split("|")[1]}`}
+                  style={{
+                    textDecoration: "none",
+                    color: "white",
+                    textShadow: "1px 1px 1px rgba(0,0,0,0.14)",
+                  }}
+                >
+                  Enter Class
+                </Link>
+              </Button>
+            </>
           )}
           {!isTeacher && (
             <>
@@ -141,11 +155,18 @@ const Home = () => {
               <input type="text" value={classCode} onChange={handleChange} />
               <Button
                 variant="contained"
-                style={{ marginBottom: "1rem", backgroundColor: "rgb(127,238,230)" }}
+                style={{
+                  marginBottom: "1rem",
+                  backgroundColor: "rgb(127,238,230)",
+                }}
               >
                 <Link
                   to={`/class/${classCode}`}
-                  style={{ textDecoration: "none", color: "white", textShadow:'1px 1px 1px rgba(0,0,0,0.14)' }}
+                  style={{
+                    textDecoration: "none",
+                    color: "white",
+                    textShadow: "1px 1px 1px rgba(0,0,0,0.14)",
+                  }}
                 >
                   Enter Class
                 </Link>
@@ -155,7 +176,11 @@ const Home = () => {
 
           <Button
             variant="contained"
-            style={{ backgroundColor: "rgb(127,238,230)", color: "white", textShadow:'1px 1px 1px rgba(0,0,0,0.14)' }}
+            style={{
+              backgroundColor: "rgb(127,238,230)",
+              color: "white",
+              textShadow: "1px 1px 1px rgba(0,0,0,0.14)",
+            }}
             onClick={() => logoutWithRedirect()}
           >
             Sign out

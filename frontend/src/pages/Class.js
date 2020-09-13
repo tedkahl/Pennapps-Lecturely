@@ -5,6 +5,7 @@ import ListItem from "@material-ui/core/ListItem";
 import Grid from "@material-ui/core/Grid";
 import io from "socket.io-client";
 import Board from "./Board";
+import { db } from "../firebase";
 
 const ENDPOINT = "http://localhost:4000";
 
@@ -12,6 +13,7 @@ const activeUsers = ["109074203591919453634", "104609449234380862807"];
 
 const Class = (props) => {
   const [loaded, setLoaded] = useState(0);
+  let [isTeacher, setIsTeacher] = useState("");
 
   const { user } = useAuth0();
 
@@ -74,6 +76,15 @@ const Class = (props) => {
     });
   };
 
+  const checkForteacher = async () => {
+    const doc = await db.doc(`user/${user.sub}`).get();
+    setIsTeacher(doc.data().isteacher);
+  };
+
+  if (user) {
+    checkForteacher();
+  }
+
   return (
     <div
       style={{
@@ -81,7 +92,15 @@ const Class = (props) => {
         flexDirection: "row",
       }}
     >
-      <Board id={userID} styling={"main"} socket={mysocket} />
+      <div>
+        {isTeacher && (
+          <h3 style={{ textAlign: "center" }}>
+            Your class code: {user.sub.split("|")[1]}
+          </h3>
+        )}
+        <Board id={userID} styling={"main"} socket={mysocket} />
+      </div>
+
       {studentList}
     </div>
   );
