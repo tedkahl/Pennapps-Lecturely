@@ -38,7 +38,6 @@ const Board = (props) => {
       const w = canvas.width;
       const h = canvas.height;
 
-      //emit sessionid and isteacher with drawing event
       socketRef.current.emit("drawing", {
         boardid: props.id,
         sessionid: props.sessionid,
@@ -124,7 +123,6 @@ const Board = (props) => {
 
     // ----------------------- socket.io connection ----------------------------
     const onDrawingEvent = (data) => {
-      if (data.boardID != props.id) return;
       const w = canvas.width;
       const h = canvas.height;
       drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
