@@ -54,8 +54,6 @@ const Home = () => {
 
   const checkForOldUser = async () => {
     const response = await getUser(user.sub);
-    console.log(response);
-    console.log(saved);
     if (response && !saved) {
       setSaved(true);
       setIsTeacher(response.isteacher);
@@ -129,24 +127,27 @@ const Home = () => {
             </>
           )}
           {isTeacher && (
-            <Button
-              variant="contained"
-              style={{
-                marginBottom: "1rem",
-                backgroundColor: "rgb(127,238,230)",
-              }}
-            >
-              <Link
-                to={`/class/${user.sub.split("|")[1]}`}
+            <>
+              <h3> Your class code: {user.sub.split("|")[1]}</h3>
+              <Button
+                variant="contained"
                 style={{
-                  textDecoration: "none",
-                  color: "white",
-                  textShadow: "1px 1px 1px rgba(0,0,0,0.14)",
+                  marginBottom: "1rem",
+                  backgroundColor: "rgb(127,238,230)",
                 }}
               >
-                Your Personal Class
-              </Link>
-            </Button>
+                <Link
+                  to={`/class/${user.sub.split("|")[1]}`}
+                  style={{
+                    textDecoration: "none",
+                    color: "white",
+                    textShadow: "1px 1px 1px rgba(0,0,0,0.14)",
+                  }}
+                >
+                  Enter Class
+                </Link>
+              </Button>
+            </>
           )}
           {!isTeacher && (
             <>
