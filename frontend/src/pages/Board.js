@@ -210,7 +210,7 @@ const Board = (props) => {
             </Button>
             <Button
               style={{
-                backgroundColor: "#f5fc1e",
+                backgroundColor: "orange",
                 color: "white",
               }}
               onClick={() => (current.color = "yellow")}
@@ -218,7 +218,9 @@ const Board = (props) => {
               Yellow
             </Button>
           </ButtonGroup>
-          <Button onClick={() => clearCanvas()}>Clear Canvas</Button>
+          <Button onClick={() => clearCanvas()}>Clear</Button>
+          <Button>Done</Button>
+          <Button>Download</Button>
         </div>
       )}
     </div>

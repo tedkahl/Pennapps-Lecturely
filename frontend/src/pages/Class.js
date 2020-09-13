@@ -40,7 +40,7 @@ const Class = (props) => {
   }
 
   const studentList = (
-    <List>
+    <List style={{margin:"0 auto 0 auto"}}>
       {activeUsers.map((id) => (
         <ListItem>
           <Board id={id} styling={"side"} socket={socket} noColor={true} />

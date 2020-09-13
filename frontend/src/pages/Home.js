@@ -9,16 +9,8 @@ import "../styles/home.css";
 const Home = () => {
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
   let [saved, setSaved] = useState(false);
-
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     if (isAuthenticated) {
-  //       const response = await getUser(user.sub);
-  //       if (response) setSaved(true);
-  //     }
-  //   }
-  //   fetchData();
-  // }, []); // Or [] if effect doesn't need props or state
+  let [isTeacher, setIsTeacher] = useState("");
+  let [classCode, setClassCode] = useState("");
 
   const saveToDatabase = (isTeacher) => {
     db.collection("user")
@@ -48,6 +40,7 @@ const Home = () => {
   };
 
   const connectToDatabase = async (isTeacher) => {
+    setIsTeacher(isTeacher);
     const response = await getUser(user.sub);
     console.log(response);
     if (!response) {
@@ -63,7 +56,15 @@ const Home = () => {
     const response = await getUser(user.sub);
     console.log(response);
     console.log(saved);
-    if (response && !saved) setSaved(true);
+    if (response && !saved) {
+      setSaved(true);
+      setIsTeacher(response.isteacher);
+    }
+  };
+
+  const handleChange = (event) => {
+    const newValue = event.target.value;
+    setClassCode(newValue);
   };
 
   if (isAuthenticated && !saved) {
@@ -83,10 +84,10 @@ const Home = () => {
           <h3>To create a session:</h3>
           <Button
             variant="contained"
-            color="secondary"
+            style={{ backgroundColor: "rgb(127,238,230)", color: "white", textShadow:'1px 1px 1px rgba(0,0,0,0.14)' }}
             onClick={() => loginWithRedirect()}
           >
-            Sign in with account
+            Sign In
           </Button>
         </>
       )}
@@ -98,64 +99,63 @@ const Home = () => {
               <div style={{ padding: 10 }}>
                 <Button
                   variant="contained"
-                  color="secondary"
                   onClick={() => connectToDatabase(true)}
-                  style={{ margin: 10 }}
+                  style={{
+                    margin: 10,
+                    backgroundColor: "rgb(127,238,230)",
+                    color: "white", textShadow:'1px 1px 1px rgba(0,0,0,0.14)'
+                  }}
                 >
                   Teacher
                 </Button>
                 <Button
                   variant="contained"
-                  color="secondary"
                   onClick={() => connectToDatabase(false)}
-                  style={{ margin: 10 }}
+                  style={{
+                    margin: 10,
+                    backgroundColor: "rgb(127,238,230)",
+                    color: "white", textShadow:'1px 1px 1px rgba(0,0,0,0.14)'
+                  }}
                 >
                   Student
                 </Button>
               </div>
             </>
           )}
-          <Button
-            variant="contained"
-            color="secondary"
-            style={{ marginBottom: "1rem" }}
-          >
-            <Link
-              to={`/class/${user.sub.split("|")[1]}`}
-              style={{ textDecoration: "none", color: "white" }}
+          {isTeacher && (
+            <Button
+              variant="contained"
+              style={{ marginBottom: "1rem", backgroundColor: "rgb(127,238,230)" }}
             >
-              Your Personal Class
-            </Link>
-          </Button>
+              <Link
+                to={`/class/${user.sub.split("|")[1]}`}
+                style={{ textDecoration: "none", color: "white", textShadow:'1px 1px 1px rgba(0,0,0,0.14)' }}
+              >
+                Your Personal Class
+              </Link>
+            </Button>
+          )}
+          {!isTeacher && (
+            <>
+              <p>Enter your class code:</p>
+              <input type="text" value={classCode} onChange={handleChange} />
+              <Button
+                variant="contained"
+                style={{ marginBottom: "1rem", backgroundColor: "rgb(127,238,230)" }}
+              >
+                <Link
+                  to={`/class/${classCode}`}
+                  style={{ textDecoration: "none", color: "white", textShadow:'1px 1px 1px rgba(0,0,0,0.14)' }}
+                >
+                  Enter Class
+                </Link>
+              </Button>
+            </>
+          )}
 
           <Button
             variant="contained"
-            color="secondary"
-            style={{ marginBottom: "1rem" }}
-          >
-            <Link
-              to={`/board/${user.sub.split("|")[1]}`}
-              style={{ textDecoration: "none", color: "white" }}
-            >
-              Your Personal Board
-            </Link>
-          </Button>
-
-          <Button
-            variant="contained"
-            color="secondary"
-            style={{ marginBottom: "1rem" }}
-          >
-            <Link
-              to={`/class/109074203591919453634`}
-              style={{ textDecoration: "none", color: "white" }}
-            >
-              Test Class
-            </Link>
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
+            style={{ backgroundColor: "rgb(127,238,230)", color: "white", textShadow:'1px 1px 1px rgba(0,0,0,0.14)' }}
             onClick={() => logoutWithRedirect()}
           >
             Sign out
