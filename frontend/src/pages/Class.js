@@ -37,7 +37,17 @@ const Class = (props) => {
     </List>
   );
 
-  return studentList;
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+      }}
+    >
+      <Board id={"123"} styling={"main"} socket={socket} />
+      {studentList}
+    </div>
+  );
   //return <ul>{boards}</ul>;
 };
 
