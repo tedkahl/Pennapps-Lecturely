@@ -1,12 +1,10 @@
 import React, { useRef, useEffect } from "react";
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
-import io from "socket.io-client";
 import "../styles/board.css";
 
 const Board = (props) => {
   const canvasRef = useRef(null);
-  const socketRef = useRef();
   const current = {
     color: "black",
   };
@@ -37,7 +35,7 @@ const Board = (props) => {
       const w = canvas.width;
       const h = canvas.height;
 
-      socketRef.current.emit("drawing", {
+      props.socket.emit("drawing", {
         boardid: props.id,
         sessionid: props.sessionid,
         isteacher: props.sessionid === props.id,
@@ -122,16 +120,14 @@ const Board = (props) => {
 
     // ----------------------- socket.io connection ----------------------------
     const onDrawingEvent = (data) => {
+      if (data.boardid != props.id) return;
+      console.log("drewn");
       const w = canvas.width;
       const h = canvas.height;
       drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
     };
 
-    socketRef.current = io.connect(
-      props.socketConnection || "http://localhost:4000"
-    );
-
-    socketRef.current.on("drawing", onDrawingEvent);
+    props.socket.on("drawing", onDrawingEvent);
   }, []);
 
   const onResize = () => {
