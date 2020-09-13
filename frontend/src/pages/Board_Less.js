@@ -22,12 +22,18 @@ const Board = (props) => {
       const offset = canvas.getBoundingClientRect();
 
       context.beginPath();
-      context.moveTo(x0 - offset.x, y0 - offset.y);
-      context.lineTo(x1 - offset.x, y1 - offset.y);
+      context.moveTo(Math.abs(x0 - offset.x), Math.abs(y0 - offset.y));
+      context.lineTo(Math.abs(x1 - offset.x), Math.abs(y1 - offset.y));
+      //context.moveTo(x0 - offset.x, y0 - offset.y);
+      //context.lineTo(x1 - offset.x, y1 - offset.y);
       context.strokeStyle = color;
       context.lineWidth = 2;
       context.stroke();
       context.closePath();
+
+      //console.log(x0 - offset.x + " -> 1");
+      //console.log(y0 - offset.y);
+      //console.log(x1 - offset.x + " " + y1 - offset.y);
 
       if (!emit) {
         return;
@@ -120,9 +126,8 @@ const Board = (props) => {
 
     // ----------------------- socket.io connection ----------------------------
     const onDrawingEvent = (data) => {
-      console.log(data.boardid);
+      console.log(data.boardid + " " + props.id);
       if (data.boardid !== props.id) return;
-      console.log("drewn");
       const w = canvas.width;
       const h = canvas.height;
       drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);

@@ -36,17 +36,11 @@ students.on("connection", (socket) => {
 teachers.on("connection", (socket) => {
   console.log("teacher connection");
 
-  if (
-    studentsList.findIndex(
-      (item) => item.userID === socket.handshake.query["id"]
-    ) !== -1
-  ) {
-    studentsList.push({
-      socketID: socket.id,
-      userID: socket.handshake.query["id"],
-    });
-    teachers.emit("update_students", studentsList);
-  }
+  studentsList.push({
+    socketID: socket.id,
+    userID: socket.handshake.query["id"],
+  });
+  teachers.emit("update_students", studentsList);
 
   socket.on("drawing", (data) => {
     students.emit("drawing", data);
