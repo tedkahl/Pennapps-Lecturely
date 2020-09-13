@@ -4,6 +4,7 @@ import ListItem from "@material-ui/core/ListItem";
 import { useAuth0 } from "@auth0/auth0-react";
 import io from "socket.io-client";
 import Board from "./Board_Less";
+import { db } from "../firebase";
 
 const ENDPOINT = "http://localhost:4000";
 
@@ -12,6 +13,7 @@ const activeUsers = ["109074203591919453634", "104609449234380862807"];
 const Class = (props) => {
   const { user } = useAuth0();
   const [usersList, setUsersList] = useState([]);
+  let [isTeacher, setIsTeacher] = useState("");
   let socket;
   const userID = user.sub.split("|")[1];
   // compare this session ID to user token to see if teacher
@@ -70,6 +72,15 @@ const Class = (props) => {
     </List>
   );
 
+  const checkForteacher = async () => {
+    const doc = await db.doc(`user/${user.sub}`).get();
+    setIsTeacher(doc.data().isteacher);
+  };
+
+  if (user) {
+    checkForteacher();
+  }
+
   return (
     <div
       style={{
@@ -77,7 +88,14 @@ const Class = (props) => {
         flexDirection: "row",
       }}
     >
-      <Board id={userID} styling="main" socket={socket} />
+      <div>
+        {isTeacher && (
+          <h3 style={{ textAlign: "center" }}>
+            Your class code: {user.sub.split("|")[1]}
+          </h3>
+        )}
+        <Board id={userID} styling={"main"} socket={socket} />
+      </div>
       {studentList}
     </div>
   );

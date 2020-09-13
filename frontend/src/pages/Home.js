@@ -149,7 +149,7 @@ const Home = () => {
               </Button>
             </>
           )}
-          {!isTeacher && (
+          {isAuthenticated && !isTeacher && (
             <>
               <p>Enter your class code:</p>
               <input type="text" value={classCode} onChange={handleChange} />

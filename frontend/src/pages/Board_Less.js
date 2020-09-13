@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import "../styles/board.css";
@@ -234,7 +235,9 @@ const Board = (props) => {
             </Button>
           </ButtonGroup>
           <Button onClick={() => clearCanvas()}>Clear</Button>
-          <Button>Done</Button>
+          <Link to={`/`}>
+            <Button>Done</Button>
+          </Link>
           <Button onClick={() => downloadImage()}>Get Transcript</Button>
           {transcript.length > 1 && (
             <div>
