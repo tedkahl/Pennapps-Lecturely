@@ -83,10 +83,10 @@ const Home = () => {
           <h3>To create a session:</h3>
           <Button
             variant="contained"
-            color="secondary"
+            style={{backgroundColor:"rgb(127,238,230)", color:'white'}}
             onClick={() => loginWithRedirect()}
           >
-            Sign in with account
+            Sign In
           </Button>
         </>
       )}
@@ -98,17 +98,15 @@ const Home = () => {
               <div style={{ padding: 10 }}>
                 <Button
                   variant="contained"
-                  color="secondary"
                   onClick={() => connectToDatabase(true)}
-                  style={{ margin: 10 }}
+                  style={{ margin: 10, backgroundColor:"rgb(127,238,230)", color:'white' }}
                 >
                   Teacher
                 </Button>
                 <Button
                   variant="contained"
-                  color="secondary"
                   onClick={() => connectToDatabase(false)}
-                  style={{ margin: 10 }}
+                  style={{ margin: 10, backgroundColor:"rgb(127,238,230)", color:'white'}}
                 >
                   Student
                 </Button>
@@ -117,12 +115,11 @@ const Home = () => {
           )}
           <Button
             variant="contained"
-            color="secondary"
-            style={{ marginBottom: "1rem" }}
+            style={{ marginBottom: "1rem", backgroundColor:"rgb(127,238,230)"}}
           >
             <Link
               to={`/class/${user.sub.split("|")[1]}`}
-              style={{ textDecoration: "none", color: "white" }}
+              style={{ textDecoration: "none", color:'white' }}
             >
               Your Personal Class
             </Link>
@@ -130,12 +127,11 @@ const Home = () => {
 
           <Button
             variant="contained"
-            color="secondary"
-            style={{ marginBottom: "1rem" }}
+            style={{ marginBottom: "1rem", backgroundColor:"rgb(127,238,230)" }}
           >
             <Link
               to={`/board/${user.sub.split("|")[1]}`}
-              style={{ textDecoration: "none", color: "white" }}
+              style={{ textDecoration: "none", color:'white' }}
             >
               Your Personal Board
             </Link>
@@ -143,19 +139,18 @@ const Home = () => {
 
           <Button
             variant="contained"
-            color="secondary"
-            style={{ marginBottom: "1rem" }}
+            style={{ marginBottom: "1rem", backgroundColor:"rgb(127,238,230)" }}
           >
             <Link
               to={`/class/109074203591919453634`}
-              style={{ textDecoration: "none", color: "white" }}
+              style={{ textDecoration: "none", color:'white' }}
             >
               Test Class
             </Link>
           </Button>
           <Button
             variant="contained"
-            color="secondary"
+            style={{backgroundColor:"rgb(127,238,230)", color:'white'}}
             onClick={() => logoutWithRedirect()}
           >
             Sign out
