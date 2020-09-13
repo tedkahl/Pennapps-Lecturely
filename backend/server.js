@@ -5,12 +5,34 @@ const io = require("socket.io")(http);
 const port = process.env.PORT || 4000;
 //const max_teacherid = 1000; //if user id is below 1000, user is a teacher
 
-//does nothing really
+let studentsList = {};
+
+//keep track of students who connect
 io.on("connection", (socket) => {
   console.log("a user connected");
+  let query = socket.handshake.query;
+  let sessionid;
+  if (query.isteacher) {
+    sessionid = query.sessionid;
+    if (!studentsList[sessionid]) studentsList[sessionid] = [];
+
+    studentsList[sessionid].push({
+      socketID: socket.id,
+      userID: query["id"],
+    });
+  }
+
+  //join room here
+  let room = query.isteacher ? query.sessionid + "-teacher" : query.sessionid;
+  socket.join(room);
+
+  console.log(socket.id, " joined ", room);
 
   socket.on("disconnect", () => {
-    console.log("a user disconnected");
+    studentsList[sessionid].splice(
+      students.findIndex((item) => item.socketID === socket.id),
+      1
+    );
   });
 });
 
@@ -18,14 +40,13 @@ io.on("connection", (socket) => {
 by teacher or student*/
 //data format {sessionid:string isteacher:x}
 io.on("connection", (socket) => {
-  socket.on("join request", (data) => {
-    let room = data.isteacher ? data.sessionid + "-teacher" : data.sessionid;
+  socket.on("join request", (data) => {});
+});
 
-    socket.join(room);
-    if (!data.isteacher)
-      socket.to(data.sessionid + "-teacher").emit("join request", data); //tells the teacher who the student is
-
-    console.log(socket.id, " joined ", room);
+//get active users for a specific session
+io.on("connection", (socket) => {
+  socket.on("get active users", (sessionid) => {
+    socket.emit("active users", studentsList[sessionid]); //this should be just to the socket that asked?
   });
 });
 
