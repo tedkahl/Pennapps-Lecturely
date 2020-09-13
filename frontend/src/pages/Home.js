@@ -83,7 +83,7 @@ const Home = () => {
           <h3>To create a session:</h3>
           <Button
             variant="contained"
-            style={{backgroundColor:"rgb(127,238,230)", color:'white', textShadow:'1px 1px 1px rgba(0,0,0,0.14)'}}
+            style={{backgroundColor:"rgb(127,238,230)", color:'white'}}
             onClick={() => loginWithRedirect()}
           >
             Sign In
@@ -99,14 +99,14 @@ const Home = () => {
                 <Button
                   variant="contained"
                   onClick={() => connectToDatabase(true)}
-                  style={{ margin: 10, backgroundColor:"rgb(127,238,230)", color:'white', textShadow:'1px 1px 1px rgba(0,0,0,0.14)' }}
+                  style={{ margin: 10, backgroundColor:"rgb(127,238,230)", color:'white' }}
                 >
                   Teacher
                 </Button>
                 <Button
                   variant="contained"
                   onClick={() => connectToDatabase(false)}
-                  style={{ margin: 10, backgroundColor:"rgb(127,238,230)", color:'white', textShadow:'1px 1px 1px rgba(0,0,0,0.14)'}}
+                  style={{ margin: 10, backgroundColor:"rgb(127,238,230)", color:'white'}}
                 >
                   Student
                 </Button>
@@ -119,7 +119,7 @@ const Home = () => {
           >
             <Link
               to={`/class/${user.sub.split("|")[1]}`}
-              style={{ textDecoration: "none", color:'white', textShadow:'1px 1px 1px rgba(0,0,0,0.14)' }}
+              style={{ textDecoration: "none", color:'white' }}
             >
               Your Personal Class
             </Link>
@@ -131,7 +131,7 @@ const Home = () => {
           >
             <Link
               to={`/board/${user.sub.split("|")[1]}`}
-              style={{ textDecoration: "none", color:'white', textShadow:'1px 1px 1px rgba(0,0,0,0.14)' }}
+              style={{ textDecoration: "none", color:'white' }}
             >
               Your Personal Board
             </Link>
@@ -143,14 +143,14 @@ const Home = () => {
           >
             <Link
               to={`/class/109074203591919453634`}
-              style={{ textDecoration: "none", color:'white', textShadow:'1px 1px 1px rgba(0,0,0,0.14)' }}
+              style={{ textDecoration: "none", color:'white' }}
             >
               Test Class
             </Link>
           </Button>
           <Button
             variant="contained"
-            style={{backgroundColor:"rgb(127,238,230)", color:'white', textShadow:'1px 1px 1px rgba(0,0,0,0.14)'}}
+            style={{backgroundColor:"rgb(127,238,230)", color:'white'}}
             onClick={() => logoutWithRedirect()}
           >
             Sign out
