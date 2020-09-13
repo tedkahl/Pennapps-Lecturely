@@ -53,7 +53,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// data format {userid:x sessionid:string groupsize:x}
+// data format {sessionid:string groupsize:x}
 io.on("connection", (socket) => {
   socket.on("enable groups", (data) => {
     if (!data.isteacher) return;
