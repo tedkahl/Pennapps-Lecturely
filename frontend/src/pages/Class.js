@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
 import Grid from "@material-ui/core/Grid";
 import io from "socket.io-client";
 import Board from "./Board";
@@ -25,7 +27,18 @@ const Class = (props) => {
     />
   ));
 
-  return <ul>{boards}</ul>;
+  const studentList = (
+    <List>
+      {activeUsers.map((id) => (
+        <ListItem>
+          <Board id={id} styling={"side"} socket={socket} noColor={true} />
+        </ListItem>
+      ))}
+    </List>
+  );
+
+  return studentList;
+  //return <ul>{boards}</ul>;
 };
 
 export default Class;

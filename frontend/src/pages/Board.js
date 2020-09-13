@@ -151,8 +151,8 @@ const Board = (props) => {
         <canvas
           ref={canvasRef}
           className={props.styling}
-          width="200"
-          height="600"
+          width="300"
+          height="200"
         />
       ) : (
         <canvas
@@ -163,56 +163,58 @@ const Board = (props) => {
         />
       )}
 
-      <div className="colors">
-        <ButtonGroup color="primary" aria-label="contained button group">
-          <Button
-            style={{
-              backgroundColor: "#000",
-              color: "white",
-            }}
-            onClick={() => (current.color = "black")}
-          >
-            Black
-          </Button>
-          <Button
-            style={{
-              backgroundColor: "#eb1710",
-              color: "white",
-            }}
-            onClick={() => (current.color = "red")}
-          >
-            Red
-          </Button>
-          <Button
-            style={{
-              backgroundColor: "#158a15",
-              color: "white",
-            }}
-            onClick={() => (current.color = "green")}
-          >
-            Green
-          </Button>
-          <Button
-            style={{
-              backgroundColor: "#1029e6",
-              color: "white",
-            }}
-            onClick={() => (current.color = "blue")}
-          >
-            Blue
-          </Button>
-          <Button
-            style={{
-              backgroundColor: "#f5fc1e",
-              color: "white",
-            }}
-            onClick={() => (current.color = "yellow")}
-          >
-            Yellow
-          </Button>
-        </ButtonGroup>
-        <Button onClick={() => clearCanvas()}>Clear Canvas</Button>
-      </div>
+      {!props.noColor && (
+        <div className="colors">
+          <ButtonGroup color="primary" aria-label="contained button group">
+            <Button
+              style={{
+                backgroundColor: "#000",
+                color: "white",
+              }}
+              onClick={() => (current.color = "black")}
+            >
+              Black
+            </Button>
+            <Button
+              style={{
+                backgroundColor: "#eb1710",
+                color: "white",
+              }}
+              onClick={() => (current.color = "red")}
+            >
+              Red
+            </Button>
+            <Button
+              style={{
+                backgroundColor: "#158a15",
+                color: "white",
+              }}
+              onClick={() => (current.color = "green")}
+            >
+              Green
+            </Button>
+            <Button
+              style={{
+                backgroundColor: "#1029e6",
+                color: "white",
+              }}
+              onClick={() => (current.color = "blue")}
+            >
+              Blue
+            </Button>
+            <Button
+              style={{
+                backgroundColor: "#f5fc1e",
+                color: "white",
+              }}
+              onClick={() => (current.color = "yellow")}
+            >
+              Yellow
+            </Button>
+          </ButtonGroup>
+          <Button onClick={() => clearCanvas()}>Clear Canvas</Button>
+        </div>
+      )}
     </div>
   );
 };

@@ -4,17 +4,11 @@
 
 .main {
   position: relative;
-  left: 0;
-  bottom: 0;
-  top: 0;
   border-style: groove;
 }
 
 .side {
   position: relative;
-  right: 0;
-  bottom: 0;
-  top: 0;
   border-style: groove;
 }
 
