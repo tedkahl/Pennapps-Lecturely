@@ -15,16 +15,29 @@ const Class = (props) => {
   let socket;
   const userID = user.sub.split("|")[1];
   // compare this session ID to user token to see if teacher
-  io.connect(ENDPOINT);
+  const mysocket = io.connect(ENDPOINT, {
+    query: {
+      boardid: props.id,
+      sessionid: props.match.params.id,
+      isteacher: props.match.params.id === props.id,
+    },
+  });
 
-  const boards = activeUsers.map((id) => (
-    <Board
-      id={id}
-      sessionid={props.match.params.id}
-      styling={props.match.params.id === id ? "main" : "side"}
-      socket={socket}
-    />
-  ));
+  let boards;
+
+  if (props.match.params.id === userID) {
+    mysocket.emit("get active users", { sessionid: props.match.params.id });
+    mysocket.on("active users", (users) => {
+      boards = users.map((id) => (
+        <Board
+          id={id}
+          sessionid={props.match.params.id}
+          styling="side"
+          socket={socket}
+        />
+      ));
+    });
+  }
 
   const studentList = (
     <List style={{margin:"0 auto 0 auto"}}>
@@ -41,7 +54,6 @@ const Class = (props) => {
     const myboard = boards.find((board) => {
       return board.props.id === userID;
     });
-    const mysocket = myboard.props.socket;
 
     mysocket.emit("enable groups", {
       sessionid: myboard.props.sessionid,
@@ -55,7 +67,6 @@ const Class = (props) => {
     const myboard = boards.find((board) => {
       return board.props.id === userID;
     });
-    const mysocket = myboard.props.socket;
 
     const studentsocket = boards.find((board) => {
       return board.props.id === studentid;

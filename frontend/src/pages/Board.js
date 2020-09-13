@@ -40,6 +40,7 @@ const Board = (props) => {
 
       //emit sessionid and isteacher with drawing event
       socketRef.current.emit("drawing", {
+        boardid: props.id,
         sessionid: props.sessionid,
         isteacher: props.sessionid === props.id,
         x0: x0 / w,
@@ -132,11 +133,6 @@ const Board = (props) => {
     socketRef.current = io.connect(
       props.socketConnection || "http://localhost:4000"
     );
-    //after connecting, emit a join request
-    socketRef.current.emit("join request", {
-      sessionid: props.sessionid,
-      isteacher: props.sessionid === props.id,
-    });
 
     socketRef.current.on("drawing", onDrawingEvent);
   }, []);
