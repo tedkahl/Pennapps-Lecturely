@@ -67,18 +67,19 @@ const Class = (props) => {
       studentid: studentsocket.id,
       groupnum: groupnum,
     });
-    return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-        }}
-      >
-        <Board id={"123"} styling={"main"} socket={socket} />
-        {studentList}
-      </div>
-    );
-    //return <ul>{boards}</ul>;
   };
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+      }}
+    >
+      <Board id={"123"} styling={"main"} socket={socket} />
+      {studentList}
+    </div>
+  );
+  //return <ul>{boards}</ul>;
 };
 export default Class;
