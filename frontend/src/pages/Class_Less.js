@@ -24,11 +24,19 @@ const Class = (props) => {
   const studentList = (
     <List style={{ margin: "0 auto 0 auto" }}>
       {usersList && props.match.params.id === userID ? (
-        usersList.map((board) => (
-          <ListItem>
-            <Board id={board} styling="side" socket={socket} noColor={true} />
-          </ListItem>
-        ))
+        usersList.map((board) => {
+          if (board.userID === userID) return;
+          return (
+            <ListItem>
+              <Board
+                id={board.userID}
+                styling="side"
+                socket={socket}
+                noColor={true}
+              />
+            </ListItem>
+          );
+        })
       ) : (
         <ListItem>
           <Board

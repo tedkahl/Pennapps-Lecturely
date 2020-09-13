@@ -120,7 +120,8 @@ const Board = (props) => {
 
     // ----------------------- socket.io connection ----------------------------
     const onDrawingEvent = (data) => {
-      if (data.boardid != props.id) return;
+      console.log(data.boardid);
+      if (data.boardid !== props.id) return;
       console.log("drewn");
       const w = canvas.width;
       const h = canvas.height;
