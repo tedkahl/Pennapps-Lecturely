@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import { useAuth0 } from "@auth0/auth0-react";
 import io from "socket.io-client";
 import Board from "./Board_Less";
 
 const ENDPOINT = "http://localhost:4000";
+
+const activeUsers = ["109074203591919453634", "104609449234380862807"];
 
 const Class = (props) => {
   const { user } = useAuth0();
@@ -19,7 +20,26 @@ const Class = (props) => {
   else socket = io.connect(ENDPOINT + "/student", { query: `id=${userID}` });
   socket.on("update_students", (data) => {
     if (data) setUsersList(data);
+    console.log(data);
   });
+
+  /*if (usersList) {
+    const boards = activeUsers.map((id) => <Board id={id} socket={socket} />);
+    return <ul>{boards}</ul>;
+  }*/
+
+  /*if (props.match.params.id === userID && usersList) {
+    const boards = usersList.map((id) => (
+      <Board id={id.userID} socket={socket} />
+    ));
+    return <ul>{boards}</ul>;
+  } else
+    return (
+      <ul>
+        <Board id={userID} socket={socket} />
+        <Board id={props.match.params.id} socket={socket} />
+      </ul>
+    );*/
 
   const studentList = (
     <List style={{ margin: "0 auto 0 auto" }}>
@@ -30,7 +50,7 @@ const Class = (props) => {
             <ListItem>
               <Board
                 id={board.userID}
-                styling="side"
+                styling="main"
                 socket={socket}
                 noColor={true}
               />
@@ -41,7 +61,7 @@ const Class = (props) => {
         <ListItem>
           <Board
             id={props.match.params.id}
-            styling="side"
+            styling="main"
             socket={socket}
             noColor={true}
           />
