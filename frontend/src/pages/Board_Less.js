@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import "../styles/board.css";
@@ -8,6 +8,7 @@ const Board = (props) => {
   const current = {
     color: "black",
   };
+  let [transcript, setTranscipt] = useState("");
 
   useEffect(() => {
     // --------------- getContext() method returns a drawing context on the canvas-----
@@ -143,6 +144,21 @@ const Board = (props) => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   };
 
+  const downloadImage = async () => {
+    console.log("Smiley");
+    setTranscipt("Smiley");
+    // var canvas = document.getElementById("canvas");
+    // var dataURL = canvas.toDataURL();
+    // console.log(dataURL);
+    // try {
+    //   const [result] = await client.documentTextDetection("./sample.png");
+    //   const fullTextAnnotation = result.fullTextAnnotation;
+    //   console.log(`Full text: ${fullTextAnnotation.text}`);
+    // } catch (e) {
+    //   console.log("Error: " + e);
+    // }
+  };
+
   // ------------- The Canvas and color elements --------------------------
 
   return (
@@ -214,7 +230,13 @@ const Board = (props) => {
           </ButtonGroup>
           <Button onClick={() => clearCanvas()}>Clear</Button>
           <Button>Done</Button>
-          <Button>Download</Button>
+          <Button onClick={() => downloadImage()}>Get Transcript</Button>
+          {transcript.length > 1 && (
+            <div>
+              <h3>Transcript:</h3>
+              <p>{transcript}</p>
+            </div>
+          )}
         </div>
       )}
     </div>

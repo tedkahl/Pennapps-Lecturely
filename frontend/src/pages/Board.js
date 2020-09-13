@@ -1,8 +1,10 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import io from "socket.io-client";
 import "../styles/board.css";
+// const vision = require("@google-cloud/vision");
+// const client = new vision.ImageAnnotatorClient();
 
 const Board = (props) => {
   const canvasRef = useRef(null);
@@ -10,6 +12,7 @@ const Board = (props) => {
   const current = {
     color: "black",
   };
+  let [transcript, setTranscipt] = useState("");
 
   useEffect(() => {
     // --------------- getContext() method returns a drawing context on the canvas-----
@@ -146,6 +149,25 @@ const Board = (props) => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   };
 
+  const downloadImage = async () => {
+    console.log("Smiley");
+    // var canvas = document.getElementById("canvas");
+    // var dataURL = canvas.toDataURL();
+    // console.log(dataURL);
+    // try {
+    //   const [result] = await client.documentTextDetection("./sample.png");
+    //   const fullTextAnnotation = result.fullTextAnnotation;
+    //   console.log(`Full text: ${fullTextAnnotation.text}`);
+    // } catch (e) {
+    //   console.log("Error: " + e);
+    // }
+  };
+
+  const changeColor = (color) => {
+    console.log(color);
+    current.color = color;
+  };
+
   // ------------- The Canvas and color elements --------------------------
 
   return (
@@ -156,6 +178,7 @@ const Board = (props) => {
           className={props.styling}
           width="300"
           height="200"
+          id="canvas"
         />
       ) : (
         <canvas
@@ -174,7 +197,7 @@ const Board = (props) => {
                 backgroundColor: "#000",
                 color: "white",
               }}
-              onClick={() => (current.color = "black")}
+              onClick={() => changeColor("black")}
             >
               Black
             </Button>
@@ -183,7 +206,7 @@ const Board = (props) => {
                 backgroundColor: "#eb1710",
                 color: "white",
               }}
-              onClick={() => (current.color = "red")}
+              onClick={() => changeColor("red")}
             >
               Red
             </Button>
@@ -192,7 +215,7 @@ const Board = (props) => {
                 backgroundColor: "#158a15",
                 color: "white",
               }}
-              onClick={() => (current.color = "green")}
+              onClick={() => changeColor("green")}
             >
               Green
             </Button>
@@ -201,7 +224,7 @@ const Board = (props) => {
                 backgroundColor: "#1029e6",
                 color: "white",
               }}
-              onClick={() => (current.color = "blue")}
+              onClick={() => changeColor("blue")}
             >
               Blue
             </Button>
@@ -210,14 +233,14 @@ const Board = (props) => {
                 backgroundColor: "orange",
                 color: "white",
               }}
-              onClick={() => (current.color = "yellow")}
+              onClick={() => changeColor("yellow")}
             >
               Yellow
             </Button>
           </ButtonGroup>
           <Button onClick={() => clearCanvas()}>Clear</Button>
           <Button>Done</Button>
-          <Button>Download</Button>
+          <Button onClick={() => downloadImage()}>Download</Button>
         </div>
       )}
     </div>
