@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
 import Grid from "@material-ui/core/Grid";
 import io from "socket.io-client";
 import Board from "./Board";
@@ -16,8 +18,23 @@ const Class = (props) => {
   io.connect(ENDPOINT);
 
   const boards = activeUsers.map((id) => (
-    <Board id={id} sessionid={props.match.params.id} socket={socket} />
+    <Board
+      id={id}
+      sessionid={props.match.params.id}
+      styling={props.match.params.id === id ? "main" : "side"}
+      socket={socket}
+    />
   ));
+
+  const studentList = (
+    <List>
+      {activeUsers.map((id) => (
+        <ListItem>
+          <Board id={id} styling={"side"} socket={socket} noColor={true} />
+        </ListItem>
+      ))}
+    </List>
+  );
 
   //sort all students into groups of size groupsize
   const enableGroups = (groupsize) => {
@@ -50,8 +67,18 @@ const Class = (props) => {
       studentid: studentsocket.id,
       groupnum: groupnum,
     });
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+        }}
+      >
+        <Board id={"123"} styling={"main"} socket={socket} />
+        {studentList}
+      </div>
+    );
+    //return <ul>{boards}</ul>;
   };
-  return <ul>{boards}</ul>;
 };
-
 export default Class;

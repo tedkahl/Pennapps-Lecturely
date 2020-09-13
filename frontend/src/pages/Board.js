@@ -6,7 +6,6 @@ import "../styles/board.css";
 
 const Board = (props) => {
   const canvasRef = useRef(null);
-  const colorsRef = useRef(null);
   const socketRef = useRef();
   const current = {
     color: "black",
@@ -22,9 +21,12 @@ const Board = (props) => {
     // ------------------------------- create the drawline ----------------------------
 
     const drawLine = (x0, y0, x1, y1, color, emit) => {
+      const offset = canvas.getBoundingClientRect();
+      console.log(offset);
+
       context.beginPath();
-      context.moveTo(x0, y0);
-      context.lineTo(x1, y1);
+      context.moveTo(x0 - offset.x, y0 - offset.y);
+      context.lineTo(x1 - offset.x, y1 - offset.y);
       context.strokeStyle = color;
       context.lineWidth = 2;
       context.stroke();
@@ -116,8 +118,8 @@ const Board = (props) => {
 
     // -------------- make the canvas fill its parent component -----------------
 
-    window.addEventListener("resize", onResize, false);
-    onResize();
+    //window.addEventListener("resize", onResize, false);
+    //onResize();
 
     // ----------------------- socket.io connection ----------------------------
     const onDrawingEvent = (data) => {
@@ -144,62 +146,84 @@ const Board = (props) => {
     canvas.height = window.innerHeight;
   };
 
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  };
+
   // ------------- The Canvas and color elements --------------------------
 
   return (
     <div>
-      <canvas ref={canvasRef} className="whiteboard" />
+      {props.styling !== "main" ? (
+        <canvas
+          ref={canvasRef}
+          className={props.styling}
+          width="300"
+          height="200"
+        />
+      ) : (
+        <canvas
+          ref={canvasRef}
+          className={props.styling}
+          width="1000"
+          height="700"
+        />
+      )}
 
-      <div ref={colorsRef} className="colors">
-        <ButtonGroup color="primary" aria-label="contained button group">
-          <Button
-            style={{
-              backgroundColor: "#000",
-              color: "white",
-            }}
-            onClick={() => (current.color = "black")}
-          >
-            Black
-          </Button>
-          <Button
-            style={{
-              backgroundColor: "#eb1710",
-              color: "white",
-            }}
-            onClick={() => (current.color = "red")}
-          >
-            Red
-          </Button>
-          <Button
-            style={{
-              backgroundColor: "#158a15",
-              color: "white",
-            }}
-            onClick={() => (current.color = "green")}
-          >
-            Green
-          </Button>
-          <Button
-            style={{
-              backgroundColor: "#1029e6",
-              color: "white",
-            }}
-            onClick={() => (current.color = "blue")}
-          >
-            Blue
-          </Button>
-          <Button
-            style={{
-              backgroundColor: "#f5fc1e",
-              color: "white",
-            }}
-            onClick={() => (current.color = "yellow")}
-          >
-            Yellow
-          </Button>
-        </ButtonGroup>
-        <Button onClick={() => onResize()}>Clear Canvas</Button>
-      </div>
+      {!props.noColor && (
+        <div className="colors">
+          <ButtonGroup color="primary" aria-label="contained button group">
+            <Button
+              style={{
+                backgroundColor: "#000",
+                color: "white",
+              }}
+              onClick={() => (current.color = "black")}
+            >
+              Black
+            </Button>
+            <Button
+              style={{
+                backgroundColor: "#eb1710",
+                color: "white",
+              }}
+              onClick={() => (current.color = "red")}
+            >
+              Red
+            </Button>
+            <Button
+              style={{
+                backgroundColor: "#158a15",
+                color: "white",
+              }}
+              onClick={() => (current.color = "green")}
+            >
+              Green
+            </Button>
+            <Button
+              style={{
+                backgroundColor: "#1029e6",
+                color: "white",
+              }}
+              onClick={() => (current.color = "blue")}
+            >
+              Blue
+            </Button>
+            <Button
+              style={{
+                backgroundColor: "#f5fc1e",
+                color: "white",
+              }}
+              onClick={() => (current.color = "yellow")}
+            >
+              Yellow
+            </Button>
+          </ButtonGroup>
+          <Button onClick={() => clearCanvas()}>Clear Canvas</Button>
+        </div>
+      )}
     </div>
   );
 };
