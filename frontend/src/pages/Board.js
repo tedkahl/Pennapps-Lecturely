@@ -36,7 +36,10 @@ const Board = (props) => {
       const w = canvas.width;
       const h = canvas.height;
 
+      //emit sessionid and isteacher with drawing event
       socketRef.current.emit("drawing", {
+        sessionid: props.sessionid,
+        isteacher: props.sessionid === props.id,
         x0: x0 / w,
         y0: y0 / h,
         x1: x1 / w,
@@ -126,6 +129,12 @@ const Board = (props) => {
     socketRef.current = io.connect(
       props.socketConnection || "http://localhost:4000"
     );
+    //after connecting, emit a join request
+    socketRef.current.emit("join request", {
+      sessionid: props.sessionid,
+      isteacher: props.sessionid === props.id,
+    });
+
     socketRef.current.on("drawing", onDrawingEvent);
   }, []);
 
