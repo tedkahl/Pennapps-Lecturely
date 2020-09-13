@@ -12,7 +12,7 @@ io.on("connection", (socket) => {
   console.log("a user connected");
   let query = socket.handshake.query;
   let sessionid;
-  if (query.isteacher) {
+  if (!query.isteacher) {
     sessionid = query.sessionid;
     if (!studentsList[sessionid]) studentsList[sessionid] = [];
 
