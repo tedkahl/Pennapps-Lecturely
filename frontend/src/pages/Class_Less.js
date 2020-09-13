@@ -8,26 +8,37 @@ import Board from "./Board_Less";
 
 const ENDPOINT = "http://localhost:4000";
 
-const activeUsers = ["109074203591919453634", "104609449234380862807"];
-
 const Class = (props) => {
   const { user } = useAuth0();
+  const [usersList, setUsersList] = useState([]);
   let socket;
   const userID = user.sub.split("|")[1];
   // compare this session ID to user token to see if teacher
   if (props.match.params.id === userID)
     socket = io.connect(ENDPOINT + "/admin");
   else socket = io.connect(ENDPOINT + "/student", { query: `id=${userID}` });
-  socket.on("update_students", (data) => console.log(data));
+  socket.on("update_students", (data) => {
+    if (data) setUsersList(data);
+  });
 
   const studentList = (
     <List style={{ margin: "0 auto 0 auto" }}>
-      {activeUsers.map((board) => (
+      {usersList && props.match.params.id === userID ? (
+        usersList.map((board) => (
+          <ListItem>
+            <Board id={board} styling="side" socket={socket} noColor={true} />
+          </ListItem>
+        ))
+      ) : (
         <ListItem>
-          <Board id={board} styling="side" socket={socket} noColor={true} />
-          {props.match.params.id === board}
+          <Board
+            id={props.match.params.id}
+            styling="side"
+            socket={socket}
+            noColor={true}
+          />
         </ListItem>
-      ))}
+      )}
     </List>
   );
 
