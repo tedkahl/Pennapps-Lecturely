@@ -11,8 +11,10 @@ const ENDPOINT = "http://localhost:4000";
 const activeUsers = ["109074203591919453634", "104609449234380862807"];
 
 const Class = (props) => {
+  const [loaded, setLoaded] = useState(0);
+
   const { user } = useAuth0();
-  let socket;
+
   const userID = user.sub.split("|")[1];
   // compare this session ID to user token to see if teacher
   const mysocket = io.connect(ENDPOINT, {
@@ -24,57 +26,49 @@ const Class = (props) => {
   });
 
   let boards;
+  mysocket.on("active users", (users) => {
+    boards = users.map((user) => (
+      <Board
+        id={user.userID}
+        sessionid={props.match.params.id}
+        styling="side"
+        socket={user.socket}
+      />
+    ));
+    setLoaded(true);
+  });
 
-  if (props.match.params.id === userID) {
-    mysocket.emit("get active users", { sessionid: props.match.params.id });
-    mysocket.on("active users", (users) => {
-      boards = users.map((id) => (
-        <Board
-          id={id}
-          sessionid={props.match.params.id}
-          styling="side"
-          socket={socket}
-        />
-      ));
-    });
-  }
+  mysocket.emit("get active users", {
+    isteacher: props.match.params.id === userID,
+    sessionid: props.match.params.id,
+  });
 
-  const studentList = (
-    <List style={{margin:"0 auto 0 auto"}}>
-      {activeUsers.map((id) => (
-        <ListItem>
-          <Board id={id} styling={"side"} socket={socket} noColor={true} />
-        </ListItem>
+  const studentList = loaded ? (
+    <List style={{ margin: "0 auto 0 auto" }}>
+      {boards.map((board) => (
+        <ListItem>{board}</ListItem>
       ))}
     </List>
-  );
+  ) : null;
 
-  //sort all students into groups of size groupsize
   const enableGroups = (groupsize) => {
-    const myboard = boards.find((board) => {
-      return board.props.id === userID;
-    });
-
     mysocket.emit("enable groups", {
-      sessionid: myboard.props.sessionid,
-      isteacher: myboard.props.sessionid === userID,
+      sessionid: props.match.params.id,
+      isteacher: props.match.params.id === userID,
       groupsize: groupsize,
     });
   };
 
   //move studentid to group groupnum
   const moveStudent = (studentid, groupnum) => {
-    const myboard = boards.find((board) => {
-      return board.props.id === userID;
-    });
-
     const studentsocket = boards.find((board) => {
       return board.props.id === studentid;
     }).props.socket;
 
     mysocket.emit("move student", {
-      sessionid: myboard.props.sessionid,
-      isteacher: myboard.props.sessionid === userID,
+      boardid: userID,
+      sessionid: props.match.params.id,
+      isteacher: props.match.params.id === userID,
       studentid: studentsocket.id,
       groupnum: groupnum,
     });
@@ -87,7 +81,7 @@ const Class = (props) => {
         flexDirection: "row",
       }}
     >
-      <Board id={"123"} styling={"main"} socket={socket} />
+      <Board id={userID} styling={"main"} socket={mysocket} />
       {studentList}
     </div>
   );

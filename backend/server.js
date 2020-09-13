@@ -9,6 +9,7 @@ const port = process.env.PORT || 4000;
 //const max_teacherid = 1000; //if user id is below 1000, user is a teacher
 
 let studentsList = {};
+let teachersList = {};
 
 //keep track of students who connect
 io.on("connection", (socket) => {
@@ -23,7 +24,10 @@ io.on("connection", (socket) => {
       socketID: socket.id,
       userID: query["id"],
     });
-  }
+  } else
+    teachersList[query.sessionid] = [
+      { socketID: socket.id, userID: query["id"] },
+    ];
 
   //join room here
   let room = query.isteacher ? query.sessionid + "-teacher" : query.sessionid;
@@ -39,17 +43,19 @@ io.on("connection", (socket) => {
   });
 });
 
-/*new users submit a join request with session id. Join a room for that session id, distinguished
-by teacher or student*/
-//data format {sessionid:string isteacher:x}
-io.on("connection", (socket) => {
-  socket.on("join request", (data) => {});
-});
-
 //get active users for a specific session
 io.on("connection", (socket) => {
-  socket.on("get active users", (sessionid) => {
-    socket.emit("active users", studentsList[sessionid]); //this should be just to the socket that asked?
+  socket.on("get active users", (data) => {
+    let users;
+    if (data.isteacher) {
+      users = teachersList[sessionid];
+      users[0].socket = io.sockets.connected[users[0].socketID];
+    } else
+      users = studentsList[sessionid].map((student) => {
+        student.socket = io.sockets.connected[student.socketID];
+        return student;
+      });
+    socket.emit("active users", users); //this should be just to the socket that asked?
   });
 });
 
