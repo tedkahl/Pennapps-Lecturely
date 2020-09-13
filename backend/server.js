@@ -1,3 +1,5 @@
+const { db } = require("../frontend/src/firebase");
+
 const app = require("express")();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
@@ -8,53 +10,83 @@ const port = process.env.PORT || 4000;
 let studentsList = {};
 let teachersList = {};
 
+async function saveactiveuser(userid,sessionid, socket){
+  await db.collection("activeusers").doc(userid).set({userid:userid, sessionid:sessionid, socket:socket})
+}
+
+async function deleteactiveuser(userid, sessionid){
+  await db.collection("activeusers").doc(userid).delete()
+}
+
 //keep track of students who connect
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
   console.log("a user connected");
   let query = socket.handshake.query;
-  let sessionid;
-  if (!query.isteacher) {
-    sessionid = query.sessionid;
-    if (!studentsList[sessionid]) studentsList[sessionid] = [];
 
-    studentsList[sessionid].push({
-      socketID: socket.id,
-      userID: query["id"],
+  console.log(socket.id);
+  console.log(query);
+  let sessionid = query.sessionid;
+
+  if (sessionid) {
+    await saveactiveuser({userid:query.userid,sessionid:query.sessionid,socket:socket});
+     
+    /*if (query.boardid == sessionid) {
+      
+      if (!studentsList[sessionid]) studentsList[sessionid] = [];
+
+      studentsList[sessionid].push({
+        socketID: socket.id,
+        userID: query["id"],
+      });
+
+      socket.on("disconnect", () => {
+        studentsList[sessionid].splice(
+          studentsList[sessionid].findIndex((item, index) => {
+            console.log(index);
+            item.socketID === socket.id;
+          }),
+          1
+        );
+      });
+    } else {
+      teachersList[sessionid] = [{ socketID: socket.id, userID: query["id"] }];
+
+      socket.on("disconnect", () => {
+        teachersList[sessionid] = [];
+      });
+    }*/
+    //join room here
+    let room = query.boardid == sessionid ? sessionid + "-teacher" : sessionid;
+    socket.join(room);
+    console.log(socket.id, " joined ", room);
+
+    socket.on("disconnect", () => {
+      await deleteactiveuser(query.userid, query.sessionid);
     });
-  } else
-    teachersList[query.sessionid] = [
-      { socketID: socket.id, userID: query["id"] },
-    ];
-
-  //join room here
-  let room = query.isteacher ? query.sessionid + "-teacher" : query.sessionid;
-  socket.join(room);
-
-  console.log(socket.id, " joined ", room);
-
-  socket.on("disconnect", () => {
-    studentsList[sessionid].splice(
-      students.findIndex((item) => item.socketID === socket.id),
-      1
-    );
-  });
+  }
 });
 
 //get active users for a specific session
+/*
 io.on("connection", (socket) => {
+  console.log("getting users");
   socket.on("get active users", (data) => {
-    let users;
-    if (data.isteacher) {
-      users = teachersList[sessionid];
-      users[0].socket = io.sockets.connected[users[0].socketID];
-    } else
-      users = studentsList[sessionid].map((student) => {
-        student.socket = io.sockets.connected[student.socketID];
+    let users = [];
+    if (
+      data.isteacher &&
+      teachersList[data.sessionid] &&
+      teachersList[data.sessionid].length > 0
+    ) {
+      users = teachersList[data.sessionid];
+      users[0].socket = users[0].socketID;
+    } else if (studentsList[data.sessionid])
+      users = studentsList[data.sessionid].map((student) => {
+        student.socket = student.socketID;
         return student;
       });
     socket.emit("active users", users); //this should be just to the socket that asked?
   });
-});
+});*/
 
 /*Send teacher drawing to students and student data to teachers. drawing includes
 sessionid and userid in addition to draw information*/
