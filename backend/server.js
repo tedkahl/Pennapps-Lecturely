@@ -4,6 +4,9 @@ const app = require("express")();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 
+const vision = require("@google-cloud/vision");
+const client = new vision.ImageAnnotatorClient();
+
 const port = process.env.PORT || 4000;
 //const max_teacherid = 1000; //if user id is below 1000, user is a teacher
 
@@ -162,6 +165,16 @@ function findGroupRoom(studentid) {
 
 app.get("/", (req, res) => {
   res.send("server running");
+});
+
+app.get("/process-text", async (req, res) => {
+  try {
+    const [result] = await client.documentTextDetection("./sample.png");
+    const fullTextAnnotation = result.fullTextAnnotation;
+    console.log(`Full text: ${fullTextAnnotation.text}`);
+  } catch (e) {
+    console.log("Error: " + e);
+  }
 });
 
 http.listen(port, () => {

@@ -12,6 +12,9 @@ const ENDPOINT = "http://localhost:4000";
 const activeUsers = ["109074203591919453634", "104609449234380862807"];
 
 const Class = (props) => {
+  const [loaded, setLoaded] = useState(0);
+  let [isTeacher, setIsTeacher] = useState("");
+
   const { user } = useAuth0();
 
   const userID = user.sub.split("|")[1];
@@ -70,27 +73,35 @@ const Class = (props) => {
           return board.props.id === studentid;
         }).props.socket;
 
-        mysocket.emit("move student", {
-          boardid: userID,
-          sessionid: props.match.params.id,
-          isteacher: props.match.params.id === userID,
-          studentid: studentsocket.id,
-          groupnum: groupnum,
-        });
-      };
+  const checkForteacher = async () => {
+    const doc = await db.doc(`user/${user.sub}`).get();
+    setIsTeacher(doc.data().isteacher);
+  };
 
-      return (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-          }}
-        >
-          <Board id={userID} styling={"main"} socket={mysocket} />
-        </div>
-      );
-      //return <ul>{boards}</ul>;
-    });
+  if (user) {
+    checkForteacher();
+  }
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+      }}
+    >
+      <div>
+        {isTeacher && (
+          <h3 style={{ textAlign: "center" }}>
+            Your class code: {user.sub.split("|")[1]}
+          </h3>
+        )}
+        <Board id={userID} styling={"main"} socket={mysocket} />
+      </div>
+
+      {studentList}
+    </div>
+  );
+  //return <ul>{boards}</ul>;
 };
 
 export default Class;
