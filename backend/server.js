@@ -1,95 +1,80 @@
-const { db } = require("../frontend/src/firebase");
-
 const app = require("express")();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 
-const vision = require("@google-cloud/vision");
+/*const vision = require("@google-cloud/vision");
 const client = new vision.ImageAnnotatorClient();
-
+*/
 const port = process.env.PORT || 4000;
 //const max_teacherid = 1000; //if user id is below 1000, user is a teacher
 
 let studentsList = {};
-let teachersList = {};
+let teachers = {};
 
-async function saveactiveuser(userid,sessionid, socket){
-  await db.collection("activeusers").doc(userid).set({userid:userid, sessionid:sessionid, socket:socket})
-}
+/*function updateLoop() {
+  if (
+    JSON.stringify(studentsList) !== JSON.stringify(lastStudentsList) ||
+    JSON.stringify(teachers) !== JSON.stringify(lastteachers)
+  ) {
+    console.log("updating users");
+    console.log("students:", Object.values(studentsList));
+    console.log("teachers:", Object.values(teachers));
+    console.log("sockets:", Object.keys(io.sockets.connected));
+  }
+  lastStudentsList = studentsList;
+  lastteachers = teachers;
+  setTimeout(() => updateLoop(), 2000);
+}*/
 
-async function deleteactiveuser(userid, sessionid){
-  await db.collection("activeusers").doc(userid).delete()
+//send student data to teacher
+function updateUsers(sessionid) {
+  let students = studentsList[sessionid]
+    ? Object.values(studentsList[sessionid])
+    : [];
+  let teacher = [teachers[sessionid]];
+  if (teacher.length > 0) {
+    console.log("students", students);
+    emitToTeacher(sessionid, "update users", { users: students });
+  }
+  console.log("teacher", teacher);
+  io.to(sessionid).emit("update users", { users: teacher });
 }
 
 //keep track of students who connect
 io.on("connection", async (socket) => {
-  console.log("a user connected");
+  //console.log("a user connected");
   let query = socket.handshake.query;
 
-  console.log(socket.id);
-  console.log(query);
-  let sessionid = query.sessionid;
+  //join room here
+  let room =
+    query.id === query.sessionid
+      ? query.sessionid + "-teacher"
+      : query.sessionid;
+  socket.join(room);
+  console.log(query.id, " joined ", room);
 
-  if (sessionid) {
-    await saveactiveuser({userid:query.userid,sessionid:query.sessionid,socket:socket});
-     
-    /*if (query.boardid == sessionid) {
-      
-      if (!studentsList[sessionid]) studentsList[sessionid] = [];
+  //if this is a user connecting and not just a board, record them. When they log off later,
+  //delete
+  if (query.userconnection) {
+    if (!studentsList[query.sessionid]) studentsList[query.sessionid] = {};
 
-      studentsList[sessionid].push({
-        socketID: socket.id,
-        userID: query["id"],
-      });
+    if (query.id === query.sessionid) teachers[query.sessionid] = query.id;
+    else studentsList[query.sessionid][query.id] = query.id;
 
-      socket.on("disconnect", () => {
-        studentsList[sessionid].splice(
-          studentsList[sessionid].findIndex((item, index) => {
-            console.log(index);
-            item.socketID === socket.id;
-          }),
-          1
-        );
-      });
-    } else {
-      teachersList[sessionid] = [{ socketID: socket.id, userID: query["id"] }];
-
-      socket.on("disconnect", () => {
-        teachersList[sessionid] = [];
-      });
-    }*/
-    //join room here
-    let room = query.boardid == sessionid ? sessionid + "-teacher" : sessionid;
-    socket.join(room);
-    console.log(socket.id, " joined ", room);
+    updateUsers(query.sessionid);
 
     socket.on("disconnect", () => {
-      await deleteactiveuser(query.userid, query.sessionid);
+      console.log("a user disconnected");
+      if (query.id === query.sessionid) delete teachers[query.sessionid];
+      else delete studentsList[query.sessionid][query.id];
+      updateUsers(query.sessionid);
     });
   }
 });
 
-//get active users for a specific session
-/*
-io.on("connection", (socket) => {
-  console.log("getting users");
-  socket.on("get active users", (data) => {
-    let users = [];
-    if (
-      data.isteacher &&
-      teachersList[data.sessionid] &&
-      teachersList[data.sessionid].length > 0
-    ) {
-      users = teachersList[data.sessionid];
-      users[0].socket = users[0].socketID;
-    } else if (studentsList[data.sessionid])
-      users = studentsList[data.sessionid].map((student) => {
-        student.socket = student.socketID;
-        return student;
-      });
-    socket.emit("active users", users); //this should be just to the socket that asked?
-  });
-});*/
+function emitToTeacher(sessionid, eventname, data) {
+  io.to(sessionid + "-teacher").emit(eventname, data);
+}
 
 /*Send teacher drawing to students and student data to teachers. drawing includes
 sessionid and userid in addition to draw information*/
@@ -97,19 +82,16 @@ sessionid and userid in addition to draw information*/
 //database call here seems bad
 io.on("connection", (socket) => {
   socket.on("drawing", (data) => {
-    room = findGroupRoom(socket.id) || data.sessionid;
+    grouproom = findGroupRoom(socket.id);
 
-    console.log(room);
-
-    if (data.isteacher) {
-      console.log("emitting to session");
+    if (data.id === data.sessionid) {
       io.to(data.sessionid).emit("drawing", data); //if user is teacher, send data to session
     } else {
-      console.log("emitting to teacher");
-      io.to(data.sessionid + "-teacher").emit("drawing", data); //if user is student, send data to teacher of session
-      if (room != data.sessionid) {
-        console.log("emitting to group");
-        io.to(room).emit("drawing", data); //if student is in a group, send data to group
+      emitToTeacher(data.sessionid, "drawing", data);
+
+      if (grouproom) {
+        data.isgroupdata = true;
+        io.to(grouproom).emit("drawing", data); //if student is in a group, send data to group
       }
     }
   });
@@ -118,8 +100,6 @@ io.on("connection", (socket) => {
 // data format {sessionid:string groupsize:x}
 io.on("connection", (socket) => {
   socket.on("enable groups", (data) => {
-    if (!data.isteacher) return;
-
     let students = Object.keys(
       io.sockets.adapter.rooms[data.sessionid].sockets
     );
@@ -159,7 +139,7 @@ function findGroupRoom(studentid) {
   let rooms = Object.keys(io.sockets.connected[studentid].rooms);
   console.log(rooms);
   return rooms.find((room) => {
-    return /\d-\d/.test(room);
+    return /\d+-\d+/.test(room);
   });
 }
 

@@ -4,7 +4,7 @@ const firebaseApp = firebase.initializeApp({
   apiKey: process.env.apiKey,
   authDomain: process.env.authDomain,
   databaseURL: process.env.databaseURL,
-  projectId: "penapps2020",
+  projectId: "lecturely-20ef2",
   storageBucket: process.env.storageBucket,
   messagingSenderId: process.env.messagingSenderId,
   appId: process.env.appId,

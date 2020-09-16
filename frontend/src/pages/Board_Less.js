@@ -44,9 +44,8 @@ const Board = (props) => {
       const h = canvas.height;
 
       props.socket.emit("drawing", {
-        boardid: props.id,
+        id: props.id,
         sessionid: props.sessionid,
-        isteacher: props.sessionid === props.id,
         x0: x0 / w,
         y0: y0 / h,
         x1: x1 / w,
@@ -61,6 +60,7 @@ const Board = (props) => {
       drawing = true;
       current.x = e.clientX || e.touches[0].clientX;
       current.y = e.clientY || e.touches[0].clientY;
+      console.log(current.x, current.y);
     };
 
     const onMouseMove = (e) => {
@@ -128,8 +128,7 @@ const Board = (props) => {
 
     // ----------------------- socket.io connection ----------------------------
     const onDrawingEvent = (data) => {
-      console.log(data.boardid + " " + props.id);
-      if (data.boardid !== props.id) return;
+      if (data.id !== props.id && !data.isgroupdata) return;
       const w = canvas.width;
       const h = canvas.height;
       drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
@@ -247,6 +246,7 @@ const Board = (props) => {
           )}
         </div>
       )}
+      <p>{props.id + " " + props.sessionid}</p>
     </div>
   );
 };
