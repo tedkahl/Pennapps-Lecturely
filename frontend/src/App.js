@@ -19,7 +19,7 @@ function App() {
               <Home />
             </Route>
             <Route path="/board/:id" exact component={Board} />
-            <Route path="/class/:id" exact component={Socket} />
+            <Route path="/class/:sessionid/:id" exact component={Socket} />
             <Redirect to="/" />
           </Switch>
         </main>

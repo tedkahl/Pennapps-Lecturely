@@ -43,10 +43,10 @@ const Home = () => {
     const user = doc.data();
     return user;
   };*/
-
+  /*
   const connectToDatabase = async (isTeacher) => {
     setIsTeacher(isTeacher);
-    /*const response = await getUser(user.sub);
+    const response = await getUser(user.sub);
     console.log(response);
     if (!response) {
       await saveToDatabase(isTeacher);
@@ -54,7 +54,7 @@ const Home = () => {
     } else {
       console.log("user already exists");
     }
-    setSaved(true);*/
+    setSaved(true);
   };
 
   const checkForOldUser = async () => {
@@ -69,7 +69,7 @@ const Home = () => {
     const newValue = event.target.value;
     setClassCode(newValue);
   };
-  /*
+  
   if (isAuthenticated && !saved) {
     checkForOldUser();
   }
@@ -81,6 +81,7 @@ const Home = () => {
 */
   return (
     <div className="home">
+      <img src="../assets/logo.png"></img>
       <p>Choose ID</p>
       <input type="text" onClick={(e) => setID(e.target.value)}></input>
       <p>Choose Session (equal to ID for teachers)</p>
