@@ -85,8 +85,8 @@ const Home = () => {
       <input type="text" onClick={(e) => setID(e.target.value)}></input>
       <p>Choose Session (equal to ID for teachers)</p>
       <input type="text" onClick={(e) => setSession(e.target.value)}></input>
-      <Link to="/Class">
-        <button>Enter Class</button>
+      <Link to={`/Class/${session}/${id}`}>
+        <Button>Enter Class</Button>
       </Link>
     </div>
   );
