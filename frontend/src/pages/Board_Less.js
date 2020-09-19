@@ -4,31 +4,35 @@ import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import "../styles/board.css";
 
+const ColorSelect = (props) => {};
+
 const Board = (props) => {
   const canvasRef = useRef(null);
-  const current = {
-    color: "black",
-  };
-  let [transcript, setTranscipt] = useState("");
+  let current = { color: "black" };
 
+  //let [transcript, setTranscipt] = useState("");
+  const setColor = (color) => {
+    current.color = color;
+  };
   useEffect(() => {
     // --------------- getContext() method returns a drawing context on the canvas-----
 
     const canvas = canvasRef.current;
+    const w = canvas.width;
+    const h = canvas.height;
     const context = canvas.getContext("2d");
     let drawing = false;
 
     // ------------------------------- create the drawline ----------------------------
 
     const drawLine = (x0, y0, x1, y1, color, emit) => {
-      const offset = canvas.getBoundingClientRect();
-
+      console.log(color);
       context.beginPath();
-      context.moveTo(Math.abs(x0 - offset.x), Math.abs(y0 - offset.y));
-      context.lineTo(Math.abs(x1 - offset.x), Math.abs(y1 - offset.y));
+      context.strokeStyle = color;
+      context.moveTo(x0, y0);
+      context.lineTo(x1, y1);
       //context.moveTo(x0 - offset.x, y0 - offset.y);
       //context.lineTo(x1 - offset.x, y1 - offset.y);
-      context.strokeStyle = color;
       context.lineWidth = 2;
       context.stroke();
       context.closePath();
@@ -40,8 +44,6 @@ const Board = (props) => {
       if (!emit) {
         return;
       }
-      const w = canvas.width;
-      const h = canvas.height;
 
       props.socket.emit("drawing", {
         id: props.id,
@@ -50,45 +52,48 @@ const Board = (props) => {
         y0: y0 / h,
         x1: x1 / w,
         y1: y1 / h,
-        color,
+        color: current.color,
       });
     };
 
     // ---------------- mouse movement --------------------------------------
 
     const onMouseDown = (e) => {
+      const rect = canvas.getBoundingClientRect();
       drawing = true;
-      current.x = e.clientX || e.touches[0].clientX;
-      current.y = e.clientY || e.touches[0].clientY;
-      console.log(current.x, current.y);
+      current.x = e.clientX - rect.x;
+      current.y = e.clientY - rect.y;
     };
 
     const onMouseMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
       if (!drawing) {
         return;
       }
       drawLine(
         current.x,
         current.y,
-        e.clientX || e.touches[0].clientX,
-        e.clientY || e.touches[0].clientY,
+        e.clientX - rect.x,
+        e.clientY - rect.y,
         current.color,
         true
       );
-      current.x = e.clientX || e.touches[0].clientX;
-      current.y = e.clientY || e.touches[0].clientY;
+      current.x = e.clientX - rect.x;
+      current.y = e.clientY - rect.y;
     };
 
     const onMouseUp = (e) => {
+      const rect = canvas.getBoundingClientRect();
       if (!drawing) {
         return;
       }
       drawing = false;
+      setColor("green");
       drawLine(
         current.x,
         current.y,
-        e.clientX || e.touches[0].clientX,
-        e.clientY || e.touches[0].clientY,
+        e.clientX - rect.x,
+        e.clientY - rect.y,
         current.color,
         true
       );
@@ -151,7 +156,7 @@ const Board = (props) => {
 
   const downloadImage = async () => {
     console.log("Smiley");
-    setTranscipt("Smiley");
+    //setTranscipt("Smiley");
     // var canvas = document.getElementById("canvas");
     // var dataURL = canvas.toDataURL();
     // console.log(dataURL);
@@ -186,13 +191,19 @@ const Board = (props) => {
 
       {!props.noColor && (
         <div className="colors">
-          <ButtonGroup color="primary" aria-label="contained button group">
+          <ButtonGroup
+            id="colors"
+            color="primary"
+            aria-label="contained button group"
+          >
             <Button
               style={{
                 backgroundColor: "#000",
                 color: "white",
               }}
-              onClick={() => (current.color = "black")}
+              onClick={() => {
+                setColor("black");
+              }}
             >
               Black
             </Button>
@@ -201,7 +212,9 @@ const Board = (props) => {
                 backgroundColor: "#eb1710",
                 color: "white",
               }}
-              onClick={() => (current.color = "red")}
+              onClick={() => {
+                setColor("red");
+              }}
             >
               Red
             </Button>
@@ -210,7 +223,9 @@ const Board = (props) => {
                 backgroundColor: "#158a15",
                 color: "white",
               }}
-              onClick={() => (current.color = "green")}
+              onClick={() => {
+                setColor("green");
+              }}
             >
               Green
             </Button>
@@ -219,7 +234,9 @@ const Board = (props) => {
                 backgroundColor: "#1029e6",
                 color: "white",
               }}
-              onClick={() => (current.color = "blue")}
+              onClick={() => {
+                setColor("yellow");
+              }}
             >
               Blue
             </Button>
@@ -228,7 +245,9 @@ const Board = (props) => {
                 backgroundColor: "orange",
                 color: "white",
               }}
-              onClick={() => (current.color = "yellow")}
+              onClick={() => {
+                setColor("yellow");
+              }}
             >
               Yellow
             </Button>
@@ -237,13 +256,6 @@ const Board = (props) => {
           <Link to={`/`}>
             <Button>Done</Button>
           </Link>
-          <Button onClick={() => downloadImage()}>Get Transcript</Button>
-          {transcript.length > 1 && (
-            <div>
-              <h3>Transcript:</h3>
-              <p>{transcript}</p>
-            </div>
-          )}
         </div>
       )}
       <p>{props.id + " " + props.sessionid}</p>
@@ -252,3 +264,11 @@ const Board = (props) => {
 };
 
 export default Board;
+/*<Button onClick={() => downloadImage()}>Get Transcript</Button>
+          {transcript.length > 1 && (
+            <div>
+              <h3>Transcript:</h3>
+              <p>{transcript}</p>
+            </div>
+          )}
+*/

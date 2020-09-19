@@ -15,7 +15,7 @@ const Home = () => {
   //  const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
   let [saved, setSaved] = useState(false);
   let [classCode, setClassCode] = useState("");
-  let [id, setID] = useState("");
+  let [id, setId] = useState("");
   let [session, setSession] = useState("");
   /*const saveToDatabase = (isTeacher) => {
     db.collection("user")
@@ -81,13 +81,15 @@ const Home = () => {
 */
   return (
     <div className="home">
-      <img src="../assets/logo.png"></img>
+      <img src={logo}></img>
       <p>Choose ID</p>
-      <input type="text" onClick={(e) => setID(e.target.value)}></input>
+      <input type="text" onChange={(e) => setId(e.target.value)}></input>
       <p>Choose Session (equal to ID for teachers)</p>
-      <input type="text" onClick={(e) => setSession(e.target.value)}></input>
+      <input type="text" onChange={(e) => setSession(e.target.value)}></input>
       <Link to={`/Class/${session}/${id}`}>
-        <Button>Enter Class</Button>
+        <Button variant="contained" color="primary">
+          Enter Class
+        </Button>
       </Link>
     </div>
   );

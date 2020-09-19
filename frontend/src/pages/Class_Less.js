@@ -6,9 +6,7 @@ import { db } from "../firebase";
 
 const Class = (props) => {
   const [usersList, setUsersList] = useState([]);
-  const id = props.match.params.id;
-  const sessionid = props.match.params.sessionid;
-  const isteacher = sessionid === id;
+  const isteacher = props.sessionid === props.id;
   // compare this session ID to user token to see if teacher
 
   props.socket.on("update users", (data) => {
@@ -27,9 +25,10 @@ const Class = (props) => {
             <ListItem>
               <Board
                 id={id}
-                sessionid={sessionid}
+                sessionid={props.sessionid}
                 styling="main"
                 socket={props.socket}
+                noColor={true}
               />
             </ListItem>
           );
@@ -37,10 +36,11 @@ const Class = (props) => {
       ) : (
         <ListItem>
           <Board
-            id={id}
-            sessionid={sessionid}
+            id={props.sessionid}
+            sessionid={props.sessionid}
             styling="main"
             socket={props.socket}
+            noColor={true}
           />
         </ListItem>
       )}
@@ -57,8 +57,8 @@ const Class = (props) => {
       <div>
         {isteacher && <h3 style={{ textAlign: "center" }}>{props.id}</h3>}
         <Board
-          id={id}
-          sessionid={sessionid}
+          id={props.id}
+          sessionid={props.sessionid}
           styling={"main"}
           socket={props.socket}
         />

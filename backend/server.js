@@ -82,6 +82,7 @@ sessionid and userid in addition to draw information*/
 //database call here seems bad
 io.on("connection", (socket) => {
   socket.on("drawing", (data) => {
+    console.log(data.color);
     grouproom = findGroupRoom(socket.id);
 
     if (data.id === data.sessionid) {
@@ -137,7 +138,6 @@ io.on("connection", (socket) => {
 
 function findGroupRoom(studentid) {
   let rooms = Object.keys(io.sockets.connected[studentid].rooms);
-  console.log(rooms);
   return rooms.find((room) => {
     return /\d+-\d+/.test(room);
   });
