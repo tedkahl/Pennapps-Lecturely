@@ -1,107 +1,80 @@
-import React, { useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import React, { useState, useEffect } from "react";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Grid from "@material-ui/core/Grid";
-import io from "socket.io-client";
+import GridList from "@material-ui/core/GridList";
+import GridListTile from "@material-ui/core/GridListTile";
 import Board from "./Board";
 import { db } from "../firebase";
 
-const ENDPOINT = "http://localhost:4000";
-
-const activeUsers = ["109074203591919453634", "104609449234380862807"];
-
 const Class = (props) => {
-  const [loaded, setLoaded] = useState(0);
-  let [isTeacher, setIsTeacher] = useState("");
-
-  const { user } = useAuth0();
-
-  const userID = user.sub.split("|")[1];
+  const [usersList, setUsersList] = useState([]);
 
   // compare this session ID to user token to see if teacher
-  let mysocket = io.connect(ENDPOINT, {
-    query: {
-      boardid: userID,
-      sessionid: props.match.params.id,
-    },
+  const isteacher = props.sessionid === props.id;
+
+  props.socket.on("update users", (data) => {
+    if (data) {
+      console.log(data.users);
+      setUsersList(data.users);
+      console.log("user list set", usersList);
+    }
   });
 
-  let studentList = <List style={{ margin: "0 auto 0 auto" }}></List>;
-  let boards = [];
-
-  //let query = await getactiveusers(userID, props.match.paramd.id);
-  db.collection("activeusers")
-    .where("sessionid", "==", props.match.params.id)
-    .get()
-    .then((query) => {
-      console.log(query);
-      let activeUsers = query.map((querySnapshot) => {
-        querySnapshot.map((item) => {
-          return item.doc;
-        });
-      });
-
-      boards = activeUsers.map((user) => (
-        <Board
-          id={user.userID}
-          sessionid={props.match.params.id}
-          styling="side"
-          socket={user.socket}
-        />
-      ));
-
-      studentList = (
-        <List style={{ margin: "0 auto 0 auto" }}>
-          {boards.map((board) => (
-            <ListItem>{board}</ListItem>
-          ))}
-        </List>
-      );
-
-      const enableGroups = (groupsize) => {
-        mysocket.emit("enable groups", {
-          sessionid: props.match.params.id,
-          isteacher: props.match.params.id === userID,
-          groupsize: groupsize,
-        });
-      };
-
-      //move studentid to group groupnum
-      const moveStudent = (studentid, groupnum) => {
-        const studentsocket = boards.find((board) => {
-          return board.props.id === studentid;
-        }).props.socket;
-
-  const checkForteacher = async () => {
-    const doc = await db.doc(`user/${user.sub}`).get();
-    setIsTeacher(doc.data().isteacher);
-  };
-
-  if (user) {
-    checkForteacher();
+  let userBoards;
+  if (usersList && usersList[0]) {
+    console.log(usersList);
+    userBoards = isteacher ? (
+      <GridList
+        container="true"
+        cols={2}
+        overflow="auto"
+        spacing={5}
+        cellHeight={260}
+      >
+        {usersList.map((user) => {
+          return (
+            <GridListTile key={user.id} cols={1}>
+              <Board
+                id={user.id}
+                name={user.name}
+                sessionid={props.sessionid}
+                styling="side"
+                socket={props.socket}
+                noDraw={true}
+              />
+            </GridListTile>
+          );
+        })}
+      </GridList>
+    ) : (
+      <Board
+        id={props.sessionid}
+        name={usersList[0].name}
+        sessionid={props.sessionid}
+        styling="main"
+        socket={props.socket}
+        noDraw={true}
+      />
+    );
   }
-
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-      }}
-    >
-      <div>
-        {isTeacher && (
-          <h3 style={{ textAlign: "center" }}>
-            Your class code: {user.sub.split("|")[1]}
-          </h3>
-        )}
-        <Board id={userID} styling={"main"} socket={mysocket} />
-      </div>
-
-      {studentList}
-    </div>
+    <Grid container direction="row" justify="space-evenly">
+      <Grid item xs={6}>
+        {isteacher && <h3 style={{ textAlign: "center" }}>{props.id}</h3>}
+        <Board
+          id={props.id}
+          name={props.name}
+          sessionid={props.sessionid}
+          styling={"main"}
+          socket={props.socket}
+        />
+      </Grid>
+      <Grid item xs={5}>
+        {userBoards}
+      </Grid>
+    </Grid>
   );
-  //return <ul>{boards}</ul>;
 };
 
 export default Class;

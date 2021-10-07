@@ -1,5 +1,5 @@
 import React from "react";
-import Class from "./Class_Less";
+import Class from "./Class";
 import io from "socket.io-client";
 //import { useAuth0 } from "@auth0/auth0-react";
 
@@ -12,6 +12,7 @@ const Socket = (props) => {
     query: {
       id: props.match.params.id,
       sessionid: props.match.params.sessionid,
+      name: props.match.params.name,
       userconnection: true,
     },
   });
@@ -20,6 +21,7 @@ const Socket = (props) => {
       {...props}
       id={props.match.params.id}
       sessionid={props.match.params.sessionid}
+      name={props.match.params.name}
       socket={socket}
     />
   );

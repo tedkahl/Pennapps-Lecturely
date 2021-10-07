@@ -32,6 +32,7 @@ function updateUsers(sessionid) {
     ? Object.values(studentsList[sessionid])
     : [];
   let teacher = [teachers[sessionid]];
+  console.log("teacher, to emit: ", teacher);
   if (teacher.length > 0) {
     console.log("students", students);
     emitToTeacher(sessionid, "update users", { users: students });
@@ -58,8 +59,14 @@ io.on("connection", async (socket) => {
   if (query.userconnection) {
     if (!studentsList[query.sessionid]) studentsList[query.sessionid] = {};
 
-    if (query.id === query.sessionid) teachers[query.sessionid] = query.id;
-    else studentsList[query.sessionid][query.id] = query.id;
+    if (query.id === query.sessionid) {
+      teachers[query.sessionid] = { id: query.id, name: query.name };
+      console.log(teachers[query.sessionid]);
+    } else
+      studentsList[query.sessionid][query.id] = {
+        id: query.id,
+        name: query.name,
+      };
 
     updateUsers(query.sessionid);
 

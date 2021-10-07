@@ -7,16 +7,12 @@ import logo from "../assets/logo.png";
 import "../styles/home.css";
 
 const Home = () => {
-  let isAuthenticated = false;
-
-  const loginWithRedirect = () => {
-    isAuthenticated = true;
-  };
   //  const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
   let [saved, setSaved] = useState(false);
   let [classCode, setClassCode] = useState("");
   let [id, setId] = useState("");
   let [session, setSession] = useState("");
+  let [name, setName] = useState("");
   /*const saveToDatabase = (isTeacher) => {
     db.collection("user")
       .doc(user.sub)
@@ -86,7 +82,9 @@ const Home = () => {
       <input type="text" onChange={(e) => setId(e.target.value)}></input>
       <p>Choose Session (equal to ID for teachers)</p>
       <input type="text" onChange={(e) => setSession(e.target.value)}></input>
-      <Link to={`/Class/${session}/${id}`}>
+      <p>Choose Name</p>
+      <input type="text" onChange={(e) => setName(e.target.value)}></input>
+      <Link to={`/Class/${session}/${id}/${name}`}>
         <Button variant="contained" color="primary">
           Enter Class
         </Button>
